@@ -7,6 +7,7 @@ const pembelianRoutes = require('./routes/pembelianRoutes');
 const penjualanRoutes = require('./routes/penjualanRoutes');
 const pengembalianRoutes = require('./routes/pengembalianRoutes');
 const stockRoutes = require('./routes/stockRoutes');
+const keuntunganRoutes = require('./routes/keuntunganRoutes');
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.use('/api/pengembalian', pengembalianRoutes);
 app.use('/api/penjualan', penjualanRoutes);
 app.use('/api/pembelian', pembelianRoutes);
 app.use('/api/stok', stockRoutes);
+app.use('/keuntungan', keuntunganRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is running...');

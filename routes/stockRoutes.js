@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {refreshStock} = require('../controllers/stockController');
+const { refreshStock, getStock } = require('../controllers/stockController');
 
 router.post('/refresh', refreshStock);
+router.get("/", getStock);
 
 module.exports = router;

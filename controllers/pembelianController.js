@@ -1,6 +1,7 @@
 const Pembelian = require("../models/pembelian");
 const csv = require("csvtojson");
 const fs = require("fs");
+const { savePembelianFromCsv } = require('../services/pembelianService');
 
 exports.createPembelian = async (req, res) => {
   try {
@@ -24,25 +25,23 @@ exports.getPembelian = async (req, res) => {
 exports.createPembelianCsv = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "File tidak ditemukan" });
+      return res.status(400).json({ error: 'File tidak ditemukan' });
     }
 
     const filePath = req.file.path;
     const jsonArray = await csv().fromFile(filePath);
 
-    // Simpan langsung ke MongoDB
-    await Pembelian.insertMany(jsonArray);
+    const result = await savePembelianFromCsv(jsonArray);
 
-    // Hapus file setelah diproses
     fs.unlinkSync(filePath);
 
     res.status(201).json({
       success: true,
-      message: "Data CSV berhasil disimpan ke MongoDB",
-      total: jsonArray.length,
+      message: 'Data CSV berhasil disimpan ke MongoDB',
+      total: result.length,
     });
   } catch (err) {
-    console.error(err);
+    console.error('❌ Error createPembelianCsv:', err);
     res.status(500).json({ error: err.message });
   }
 };

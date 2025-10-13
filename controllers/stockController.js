@@ -1,21 +1,21 @@
 const mongoose = require("mongoose");
+const Stock = require("../models/stock");
 
 exports.refreshStock = async (req, res) => {
   try {
     const db = mongoose.connection.db;
-
-    // Pastikan koleksi pembelian ada
     const pembelianCollection = db.collection("pembelian");
 
-    // Drop koleksi stok_perbulan jika ada
+    // Cek dan hapus koleksi stok_perbulan jika sudah ada
     const collections = await db.listCollections().toArray();
     const stokExists = collections.some((col) => col.name === "stok_perbulan");
+
     if (stokExists) {
       await db.collection("stok_perbulan").drop();
       console.log("🗑️ Koleksi stok_perbulan dihapus");
     }
 
-    // Jalankan pipeline
+    // Jalankan pipeline agregasi
     await pembelianCollection.aggregate([
       {
         $lookup: {
@@ -28,14 +28,14 @@ exports.refreshStock = async (req, res) => {
                   $and: [
                     { $eq: ["$Nama_Item", "$$nama"] },
                     { $eq: ["$Bulan", "$$bulan"] },
-                    { $eq: ["$Tahun", "$$tahun"] }
-                  ]
-                }
-              }
-            }
+                    { $eq: ["$Tahun", "$$tahun"] },
+                  ],
+                },
+              },
+            },
           ],
-          as: "jual"
-        }
+          as: "jual",
+        },
       },
       {
         $lookup: {
@@ -48,14 +48,14 @@ exports.refreshStock = async (req, res) => {
                   $and: [
                     { $eq: ["$Nama_Item", "$$nama"] },
                     { $eq: ["$Bulan", "$$bulan"] },
-                    { $eq: ["$Tahun", "$$tahun"] }
-                  ]
-                }
-              }
-            }
+                    { $eq: ["$Tahun", "$$tahun"] },
+                  ],
+                },
+              },
+            },
           ],
-          as: "retur"
-        }
+          as: "retur",
+        },
       },
       {
         $group: {
@@ -63,35 +63,38 @@ exports.refreshStock = async (req, res) => {
             Kode_Item: "$Kode_Item",
             Nama_Item: "$Nama_Item",
             Bulan: "$Bulan",
-            Tahun: "$Tahun"
+            Tahun: "$Tahun",
           },
           Jumlah_Beli: { $sum: "$Jumlah" },
           Jumlah_Jual: { $sum: { $sum: "$jual.Jumlah" } },
-          Jumlah_Retur: { $sum: { $sum: "$retur.Jml" } }
-        }
+          Jumlah_Retur: { $sum: { $sum: "$retur.Jml" } },
+        },
       },
       {
         $addFields: {
           Stok_Akhir: {
             $subtract: [
               { $subtract: ["$Jumlah_Beli", "$Jumlah_Jual"] },
-              "$Jumlah_Retur"
-            ]
-          }
-        }
+              "$Jumlah_Retur",
+            ],
+          },
+        },
       },
       {
         $addFields: {
           Keterangan: {
             $switch: {
               branches: [
-                { case: { $lt: ["$Stok_Akhir", 0] }, then: "Penjualan_melebihi_stok" },
-                { case: { $eq: ["$Stok_Akhir", 0] }, then: "Habis" }
+                {
+                  case: { $lt: ["$Stok_Akhir", 0] },
+                  then: "Penjualan_melebihi_stok",
+                },
+                { case: { $eq: ["$Stok_Akhir", 0] }, then: "Habis" },
               ],
-              default: "Tersedia"
-            }
-          }
-        }
+              default: "Tersedia",
+            },
+          },
+        },
       },
       {
         $project: {
@@ -104,19 +107,29 @@ exports.refreshStock = async (req, res) => {
           Jumlah_Jual: 1,
           Jumlah_Retur: 1,
           Stok_Akhir: 1,
-          Keterangan: 1
-        }
+          Keterangan: 1,
+        },
       },
       { $sort: { Tahun: 1, Bulan: 1, Nama_Item: 1 } },
-      { $out: "stok_perbulan" } // simpan hasil ke koleksi baru
+      { $out: "stok_perbulan" },
     ]).toArray();
 
     res.status(200).json({
       success: true,
-      message: "Stok per bulan berhasil direfresh dan disimpan."
+      message: "✅ Stok per bulan berhasil direfresh dan disimpan.",
     });
   } catch (err) {
     console.error("❌ Gagal refresh stok:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 🟢 GET Semua stok
+exports.getStock = async (req, res) => {
+  try {
+    const stocks = await Stock.find().sort({ Tahun: 1, Bulan: 1, Nama_Item: 1 });
+    res.status(200).json(stocks);
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
