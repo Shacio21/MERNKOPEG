@@ -1,6 +1,5 @@
 import React from "react";
 import "../../style/landingpage.css";
-import backgroundhero from "../../assets/backgroundhero.webp";
 
 const HeroSection: React.FC = () => {
   return (
