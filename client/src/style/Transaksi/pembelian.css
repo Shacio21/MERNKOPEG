@@ -1,62 +1,86 @@
-/* ============== CustomerTable ============== */
-.customer-table-container {
-  border-radius: 8px;
-  overflow: auto;
+/* ============== PembelianTable ============== */
+/* Container */
+.pembelian-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.customer-table {
+/* Title */
+.pembelian-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #344c38;
+}
+
+/* Table Style */
+.pembelian-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: "Inter", sans-serif;
-  font-size: 14px;
-  color: #111827;
-}
-
-.customer-table thead {
-  background-color: #4287f5; 
-  color: white;
-  font-weight: 600;
-}
-
-.customer-table thead th {
   text-align: left;
+  font-size: 14px;
+}
+
+.pembelian-table thead {
+  background: #344c38;
+  color: #ffffff;
+}
+
+.pembelian-table th,
+.pembelian-table td {
   padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.customer-table tbody tr {
-  border-bottom: 1px solid #e5e7eb;
+.pembelian-table tr:hover {
+  background-color: #93cea6;
+  transition: 0.3s;
 }
 
-.customer-table tbody td {
-  padding: 12px 16px;
-  vertical-align: middle;
+.pembelian-table th:first-child {
+  border-top-left-radius: 12px;
 }
 
-.customer-table tbody tr:last-child {
-  border-bottom: none;
+.pembelian-table th:last-child {
+  border-top-right-radius: 12px;
 }
 
+/* ============== Pagination ============== */
 
-/* ============== Badge ============== */
-.badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 9999px;
-  font-size: 12px;
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.pagination-btn {
+  background-color: #344c38;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 14px;
+}
+
+.pagination-btn:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #45694e;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #344c38;
   font-weight: 500;
-}
-
-.badge-cold {
-  background-color: #e0f2fe;
-  color: #0284c7;
-}
-
-.badge-warm {
-  background-color: #dcfce7;
-  color: #16a34a;
-}
-
-.badge-hot {
-  background-color: #fee2e2;
-  color: #dc2626;
 }

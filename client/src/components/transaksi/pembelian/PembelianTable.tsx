@@ -1,55 +1,58 @@
-import React from "react";
-import CustomerRow from "./PembelianRow";
-import "../../../style/Transaksi/pembelian.css"
+import React, { useState } from "react";
+import "../../../style/Transaksi/pembelian.css";
+import Pagination from "./Pagination";
 
-interface Customer {
-  phone: string;
-  category: "Cold" | "Warm" | "Hot";
-  lastActive: string;
-}
+// === Data yang sudah kamu punya ===
+import { data } from "./dataPembelian"; // kamu bisa pisahkan ke file terpisah jika mau
 
-const customers: Customer[] = [
-  { phone: "+62 882 1739 2384", category: "Cold", lastActive: "20 minute ago" },
-  { phone: "+62 857 5345 5213", category: "Cold", lastActive: "1 hour ago" },
-  { phone: "+62 815 4536 2683", category: "Hot", lastActive: "Yesterday" },
-  { phone: "+62 879 3813 3249", category: "Warm", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0284", category: "Warm", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0285", category: "Warm", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0286", category: "Hot", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0287", category: "Hot", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0288", category: "Warm", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0289", category: "Cold", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0210", category: "Warm", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0211", category: "Warm", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0212", category: "Hot", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0213", category: "Hot", lastActive: "07/09/2025" },
-  { phone: "+62 879 3904 0214", category: "Warm", lastActive: "07/09/2025" },
-];
+const ITEMS_PER_PAGE = 10;
 
 const PembelianTable: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentData = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   return (
-      <div className="customer-table-container">
-        <table className="customer-table">
-          <thead>
-            <tr>
-              <th>Phone Number</th>
-              <th>Categories</th>
-              <th>Last Active Chat Timestamp</th>
-              <th></th>
+    <div className="pembelian-container">
+      <h2 className="pembelian-title">Tabel Pembelian</h2>
+
+      <table className="pembelian-table">
+        <thead>
+          <tr>
+            <th>Kode Item</th>
+            <th>Nama Item</th>
+            <th>Jenis</th>
+            <th>Jumlah</th>
+            <th>Satuan</th>
+            <th>Total Harga</th>
+            <th>Bulan</th>
+            <th>Tahun</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentData.map((item, idx) => (
+            <tr key={idx}>
+              <td>{item.Kode_Item}</td>
+              <td>{item.Nama_Item}</td>
+              <td>{item.Jenis}</td>
+              <td>{item.Jumlah}</td>
+              <td>{item.Satuan}</td>
+              <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
+              <td>{item.Bulan}</td>
+              <td>{item.Tahun}</td>
             </tr>
-          </thead>
-          <tbody>
-            {customers.map((c, i) => (
-              <CustomerRow
-                key={i}
-                phone={c.phone}
-                category={c.category}
-                lastActive={c.lastActive}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+    </div>
   );
 };
 

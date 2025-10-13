@@ -331,3 +331,37 @@ img {
     opacity: 1;
   }
 }
+
+
+/* ================= TransaksiLayout ================== */
+/* Wrapper utama layout transaksi */
+.transaksi-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: white; /* Warna background putih */
+}
+
+/* Bagian konten utama di samping sidebar */
+.transaksi-layout-content {
+  flex: 1;
+  padding: 20px;
+  background-color: white; /* Pastikan konten juga putih */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header area */
+.transaksi-layout-header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.transaksi-layout-header h2 {
+  font-size: 20px;
+  color: #333;
+}
+
+.transaksi-layout-header span {
+  font-weight: 600;
+}
