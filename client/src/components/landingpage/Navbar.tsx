@@ -17,22 +17,22 @@ const Navbar: React.FC = () => {
           <a href="#">Home</a>
         </li>
         <li>
-          <a href="#">ger</a>
+          <a href="#">Pembelian</a>
         </li>
         <li>
-          <a href="#">ger</a>
+          <a href="#">Penjualan</a>
         </li>
         <li>
-          <a href="#">gerr</a>
+          <a href="#">Return</a>
         </li>
         <li>
-          <a href="#">gerr</a>
+          <a href="#">Stock</a>
         </li>
         <li>
-          <a href="#">gerrr</a>
+          <a href="#">keuntungan</a>
         </li>
         <li>
-          <a href="#">gersdsrs</a>
+          <a href="#">Prediksi</a>
         </li>
       </ul>
     </nav>

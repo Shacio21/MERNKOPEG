@@ -5,8 +5,7 @@ import backgroundhero from "../../assets/backgroundhero.webp";
 const HeroSection: React.FC = () => {
   return (
     <section
-    className="hero-section"
-    style={{ backgroundImage: `url(${backgroundhero})` }}
+      className="hero-section"
     >
       <div className="hero-content">
         <div className="hero-label">
@@ -16,14 +15,13 @@ const HeroSection: React.FC = () => {
 
         <div className="hero-text">
           <div className="hero-title">
-            <h1 className="title-yellow">Koperasi Pegawai</h1>
+            <h1 className="title-yellow">KOPERASI PEGAWAI</h1>
             <div className="title-icon"></div>
-            <h1 className="title-white">Polman</h1>
+            <h1 className="title-white">POLMAN</h1>
           </div>
 
           <p className="hero-description">
-            Dissuade ecstatic and properly saw entirely sir why laughter
-            endeavor. In on my jointure horrible margaret suitable he speedily.
+            Website Rekap Data Penjualan dari mini market Koperasi Pegawai Polman Manufaktur Bandung
           </p>
 
           <button className="hero-button">Discover More</button>
