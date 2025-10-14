@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import "../../../style/Transaksi/pembelian.css";
 import Pagination from "./Pagination";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 10; // Sesuai limit API
 const BASE_URL = "http://172.20.10.3:3001";
 
 interface PembelianItem {
+  _id: string;
   Kode_Item: number;
   Nama_Item: string;
   Jenis: string;
@@ -16,45 +17,61 @@ interface PembelianItem {
   Tahun: number;
 }
 
+interface ApiResponse {
+  success: boolean;
+  currentPage: number;
+  totalPages: number;
+  totalData: number;
+  data: PembelianItem[];
+}
+
 const PembelianTable: React.FC = () => {
   const [data, setData] = useState<PembelianItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/pembelian`, {
+  // Optional: search state (bisa dikembangkan jadi input)
+
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(
+        `${BASE_URL}/api/pembelian?page=${page}&limit=${ITEMS_PER_PAGE}`,
+        {
           headers: {
             Accept: "application/json",
           },
-        });
-
-        const text = await res.text();
-        console.log("📡 Raw API Response:", text); // <— cek isi respons mentahnya di browser console
-
-        try {
-          const json = JSON.parse(text);
-          setData(json);
-        } catch {
-          throw new Error(
-            "Respons dari server bukan JSON. Cek console.log untuk melihat isi respons."
-          );
         }
-      } catch (err: any) {
-        setError(err.message || "Terjadi kesalahan saat mengambil data");
-      } finally {
-        setLoading(false);
+      );
+
+      const text = await res.text();
+      console.log("📡 Raw API Response:", text);
+      console.log("📡 Raw API Response:", res);
+
+      const json: ApiResponse = JSON.parse(text);
+
+      if (!json.success) {
+        throw new Error("Gagal mengambil data dari server");
       }
-    };
 
-    fetchData();
-  }, []);
+      setData(json.data);
+      setCurrentPage(json.currentPage);
+      setTotalPages(json.totalPages);
+    } catch (err: any) {
+      setError(err.message || "Terjadi kesalahan saat mengambil data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentData = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  useEffect(() => {
+    fetchData(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
 
   return (
     <div className="pembelian-container">
@@ -82,8 +99,8 @@ const PembelianTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {currentData.map((item, idx) => (
-                <tr key={idx}>
+              {data.map((item) => (
+                <tr key={item._id}>
                   <td>{item.Kode_Item}</td>
                   <td>{item.Nama_Item}</td>
                   <td>{item.Jenis}</td>
@@ -97,11 +114,11 @@ const PembelianTable: React.FC = () => {
             </tbody>
           </table>
 
-          {data.length > ITEMS_PER_PAGE && (
+          {totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}
+              onPageChange={(page) => setCurrentPage(page)}
             />
           )}
         </>
