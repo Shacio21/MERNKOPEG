@@ -207,21 +207,25 @@ html, body {
 }
 
 
-/* ================= INFORMATION SECTION ================== */
+/* ================= INFORMATION SECTION (SUDAH DIPERBAIKI) ================== */
 
 .intro-section {
-  position: relative;
+  position: relative; /* Tetap relative untuk elemen dekoratif */
   width: 100%;
-  height: 910px;
-  background-color: #1f3221;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: #6d8c54;
+  display: flex; /* INI KUNCINYA: Mengaktifkan Flexbox */
+  align-items: center; /* Membuat kolom gambar dan teks sejajar di tengah */
+  justify-content: center; /* Posisikan item di tengah dengan jarak */
+  gap: 60px; /* Memberi jarak antar kolom gambar dan teks */
+  padding: 80px 40px; /* Memberi ruang di dalam section */
+  box-sizing: border-box; /* Agar padding tidak menambah lebar total */
   overflow: hidden;
   font-family: 'Livvic', sans-serif;
   color: #ffffff;
+  min-height: 910px; /* Gunakan min-height agar lebih fleksibel */
 }
 
+/* Elemen dekoratif bisa tetap menggunakan position: absolute */
 .intro-left-bg {
   position: absolute;
   left: 0;
@@ -229,6 +233,7 @@ html, body {
   width: 658px;
   height: 497px;
   background: #263c28;
+  z-index: 0; /* Taruh di belakang */
 }
 
 .intro-yellow-bar {
@@ -239,29 +244,34 @@ html, body {
   height: 258px;
   background: #f7c35f;
   border-radius: 5px 0 0 5px;
+  z-index: 0; /* Taruh di belakang */
 }
 
+/* Kolom Gambar (Kiri) */
 .intro-image-container {
-  position: absolute;
-  left: 240px;
-  top: 100px;
+  /* HAPUS: position: absolute; left: 240px; top: 100px; */
+  position: relative; /* UBAH: Jadi relative agar .project-card bisa absolut di dalamnya */
+  flex-basis: 50%; /* Atur lebar kolom, misal 50% */
+  max-width: 564px; /* Batasi lebar maksimum agar tidak terlalu besar */
+  z-index: 1;
 }
 
 .intro-image {
-  width: 564px;
-  height: 651px;
+  width: 100%; /* Lebar 100% dari parent-nya */
+  height: auto; /* Tinggi otomatis agar proporsional */
   object-fit: cover;
   border-radius: 10px;
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+  display: block;
 }
 
 .project-card {
-  position: absolute;
-  bottom: -40px;
+  position: absolute; /* Tetap absolute, relatif terhadap .intro-image-container */
+  bottom: -100px;
   left: 60px;
   width: 428px;
   height: 140px;
-  background: #6d8c54;
+  background: #1f3221;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -269,6 +279,19 @@ html, body {
   gap: 30px;
 }
 
+/* Kolom Teks (Kanan) */
+.intro-text {
+  /* HAPUS: position: absolute; left: 884px; top: 119px; */
+  flex-basis: 50%; /* Atur lebar kolom, misal 50% */
+  max-width: 796px; /* Batasi lebar maksimum */
+  display: flex;
+  flex-direction: column;
+  gap: 40px; /* Atur ulang jarak agar lebih konsisten */
+  z-index: 1;
+}
+
+
+/* Styling di dalam card dan teks bisa tetap sama */
 .project-icon {
   width: 76px;
   height: 70px;
@@ -279,12 +302,13 @@ html, body {
 .project-line {
   width: 1px;
   height: 77px;
-  background: rgba(255, 255, 255, 0.2);
+  background: #ffffff33;
 }
 
 .project-text h2 {
   font-family: 'Mistral', cursive;
   font-size: 40px;
+  color: #f7c35f;
   margin: 0;
 }
 
@@ -292,16 +316,6 @@ html, body {
   font-size: 16px;
   font-weight: 500;
   margin: 4px 0 0;
-}
-
-.intro-text {
-  position: absolute;
-  left: 884px;
-  top: 119px;
-  width: 796px;
-  display: flex;
-  flex-direction: column;
-  gap: 55px;
 }
 
 .intro-sub {
@@ -340,13 +354,6 @@ html, body {
   gap: 20px;
 }
 
-.intro-list li::before {
-  content: '\2713'; /* check icon */
-  color: #f7c35f;
-  margin-right: 15px;
-  font-weight: bold;
-}
-
 .intro-list li {
   font-size: 20px;
   font-weight: 500;
@@ -354,3 +361,345 @@ html, body {
   align-items: center;
   color: #ffffff;
 }
+
+.intro-list li::before {
+  content: '\2713'; /* check icon */
+  color: #f7c35f;
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+/* ================= ANGGOTA SECTION ================== */
+
+.fasilitas-section {
+  background-color: #263c28;
+  color: white;
+  padding: 80px 10%;
+  text-align: center;
+}
+
+.fasilitas-title {
+  margin-bottom: 60px;
+}
+
+.fasilitas-title .subtitle {
+  font-family: "Century Gothic", sans-serif;
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.fasilitas-title h2 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 700;
+  font-size: 50px;
+  color: #ffffff;
+}
+
+.fasilitas-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.fasilitas-card {
+  background: rgba(217, 217, 217, 0.1);
+  backdrop-filter: blur(25px);
+  border-radius: 15px;
+  width: 300px;
+  height: 290px;
+  padding: 35px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fasilitas-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.fasilitas-icon {
+  background-color: #f7c35f;
+  color: #263c28;
+  font-size: 2.2rem;
+  border-radius: 10px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fasilitas-card h3 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 0;
+  color: #ffffff;
+}
+
+.fasilitas-card p {
+  font-family: "Livvic", sans-serif;
+  font-size: 18px;
+  line-height: 25px;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+/* Responsif */
+@media (max-width: 1024px) {
+  .fasilitas-grid {
+    gap: 20px;
+  }
+
+  .fasilitas-card {
+    width: 45%;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .fasilitas-card {
+    width: 100%;
+  }
+
+  .fasilitas-title h2 {
+    font-size: 36px;
+  }
+}
+
+
+/* ================= KEUNTUNGAN & KERUGIAN SECTION ================== */
+
+.keuntungan-section {
+  position: relative;
+  width: 100%;
+  height: 705px;
+  background-color: #6d8c54;
+  display: flex;
+  overflow: hidden;
+}
+
+.bg-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 841px;
+  height: 100%;
+  object-fit: cover;
+}
+
+.keuntungan-content {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: calc(100% - 841px);
+  height: 100%;
+  padding: 80px 120px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.section-title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 60px;
+}
+
+.subtitle {
+  font-family: 'Cabin Condensed', sans-serif;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: 'Livvic', sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+}
+
+.icon-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: #344c31;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+}
+
+.info-text h2 {
+  font-family: 'Livvic', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.info-text p {
+  font-family: 'Cabin Condensed', sans-serif;
+  font-size: 18px;
+  line-height: 27px;
+  color: #fff;
+}
+
+.divider {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ================= PRODUCT INFORMATION ================== */
+
+
+.explore-section {
+  padding: 80px 5%;
+  background-color: #263c28;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
+
+.explore-title {
+  margin-bottom: 50px;
+}
+
+.subtitle {
+  color: #f7c35f;
+  letter-spacing: 2px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.explore-title h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 20px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.product-card {
+  flex: 0 0 calc(20% - 10px); /* 5 per tampilan */
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+}
+
+.product-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.8) 100%);
+  opacity: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .overlay {
+  opacity: 1;
+}
+
+.text {
+  text-align: left;
+}
+
+.category {
+  color: #f7c35f;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.text h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  max-width: 180px;
+  line-height: 1.3;
+}
+
+.arrow {
+  font-size: 1.8rem;
+  color: #f7c35f;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .arrow {
+  transform: translateX(6px);
+}
+
+/* Responsif */
+@media (max-width: 1024px) {
+  .product-card {
+    flex: 0 0 calc(33.33% - 10px); /* 3 per tampilan */
+  }
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    flex: 0 0 calc(50% - 10px); /* 2 per tampilan */
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card {
+    flex: 0 0 100%; /* 1 per tampilan */
+  }
+}
+
