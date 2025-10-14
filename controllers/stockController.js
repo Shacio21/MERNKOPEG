@@ -209,14 +209,31 @@ exports.getStock = async (req, res) => {
 
 exports.getTotalStockPerItem = async (req, res) => {
   try {
-    // Ambil filter opsional dari query
-    const { tahun, bulan } = req.query;
+    // Ambil query params
+    const { tahun, bulan, search } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
+    // 🔍 Filter dasar (tahun & bulan)
     const matchStage = {};
     if (tahun) matchStage.Tahun = tahun;
     if (bulan) matchStage.Bulan = bulan;
 
-    // Pipeline agregasi
+    // 🔍 Filter pencarian global
+    const searchStage = [];
+    if (search) {
+      const isNumber = !isNaN(search);
+      if (isNumber) {
+        searchStage.push({ Kode_Item: search });
+      } else {
+        searchStage.push({
+          Nama_Item: { $regex: search, $options: "i" },
+        });
+      }
+    }
+
+    // Pipeline agregasi utama
     const pipeline = [
       { $match: matchStage },
       {
@@ -226,8 +243,8 @@ exports.getTotalStockPerItem = async (req, res) => {
           Total_Stok_Akhir: { $sum: "$Stok_Akhir" },
           Total_Jumlah_Beli: { $sum: "$Jumlah_Beli" },
           Total_Jumlah_Jual: { $sum: "$Jumlah_Jual" },
-          Total_Jumlah_Retur: { $sum: "$Jumlah_Retur" }
-        }
+          Total_Jumlah_Retur: { $sum: "$Jumlah_Retur" },
+        },
       },
       { $sort: { _id: 1 } },
       {
@@ -238,23 +255,40 @@ exports.getTotalStockPerItem = async (req, res) => {
           Total_Jumlah_Beli: 1,
           Total_Jumlah_Jual: 1,
           Total_Jumlah_Retur: 1,
-          Total_Stok_Akhir: 1
-        }
-      }
+          Total_Stok_Akhir: 1,
+        },
+      },
     ];
+
+    // Setelah digroup, baru lakukan search
+    if (searchStage.length > 0) {
+      pipeline.push({ $match: { $or: searchStage } });
+    }
+
+    // Hitung total data sebelum pagination
+    const allData = await mongoose.model("Stock").aggregate(pipeline);
+    const totalData = allData.length;
+
+    // Tambahkan pagination
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
 
     const result = await mongoose.model("Stock").aggregate(pipeline);
 
     res.status(200).json({
       success: true,
-      totalItem: result.length,
+      currentPage: page,
+      totalPages: Math.ceil(totalData / limit),
+      totalData,
       filter: { tahun: tahun || "semua", bulan: bulan || "semua" },
-      data: result
+      search: search || "tidak ada",
+      data: result,
     });
   } catch (err) {
     console.error("❌ Gagal menghitung total stok:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 
