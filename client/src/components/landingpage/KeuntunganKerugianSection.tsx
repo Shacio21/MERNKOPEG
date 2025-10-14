@@ -1,29 +1,25 @@
 import React from "react";
 import "../../style/landingpage.css";
-import keuntunganIcon from "../../assets/logokopeg.svg"; // ganti dengan path ikon keuntungan
-import kerugianIcon from "../../assets/logokopeg.svg"; // ganti dengan path ikon kerugian
-import bgImage from "../../assets/imagekeuntungankerugian.webp"; // ganti dengan path gambar latar
+// 1. Impor ikon dari library
+import { FaArrowUp, FaArrowDown } from "react-icons/fa"; 
+import bgImage from "../../assets/imagekeuntungankerugian.webp";
 
 const KeuntunganKerugian: React.FC = () => {
   return (
     <section className="keuntungan-section">
-      {/* Gambar Latar */}
       <img src={bgImage} alt="Keunggulan Koperasi" className="bg-image" />
 
-      {/* Konten Utama */}
       <div className="keuntungan-content">
-        {/* Judul Section */}
         <div className="section-title">
-          <p className="subtitle">KOPEG POLMAN</p>
           <h1 className="title">KEUNTUNGAN DAN KERUGIAN</h1>
         </div>
 
-        {/* Bagian Keuntungan & Kerugian */}
         <div className="info-group">
           {/* Keuntungan */}
           <div className="info-item">
             <div className="icon-circle">
-              <img src={keuntunganIcon} alt="Keuntungan Icon" className="icon" />
+              {/* 2. Ganti <img> dengan komponen ikon */}
+              <FaArrowUp className="icon" />
             </div>
             <div className="info-text">
               <h2>KEUNTUNGAN</h2>
@@ -40,7 +36,8 @@ const KeuntunganKerugian: React.FC = () => {
           {/* Kerugian */}
           <div className="info-item">
             <div className="icon-circle">
-              <img src={kerugianIcon} alt="Kerugian Icon" className="icon" />
+              {/* 3. Ganti <img> dengan komponen ikon */}
+              <FaArrowDown className="icon" />
             </div>
             <div className="info-text">
               <h2>KERUGIAN</h2>

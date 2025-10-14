@@ -5,6 +5,7 @@ import InformationSection from '../components/landingpage/InformationSection'
 import AnggotaSection from '../components/landingpage/AnggotaSection'
 import KeuntunganKerugianSection from '../components/landingpage/KeuntunganKerugianSection'
 import ProductSection from '../components/landingpage/ProductSection'
+import FooterSection from '../components/landingpage/FooterSection'
 import "../style/landingpage.css"
 
 const LandingPage: React.FC = () => {
@@ -16,6 +17,7 @@ const LandingPage: React.FC = () => {
       <AnggotaSection />
       <KeuntunganKerugianSection />
       <ProductSection />
+      <FooterSection />
     </div>
   )
 }

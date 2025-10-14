@@ -1,6 +1,8 @@
 import React from "react";
 import "../../style/landingpage.css";
-import { BiWallet, BiInfoCircle, BiStore, BiDollar } from "react-icons/bi";
+// 1. Ganti/tambahkan impor ikon
+import { BiWallet, BiInfoCircle, BiStore } from "react-icons/bi";
+import { FaDollarSign } from "react-icons/fa";
 
 const AnggotaSection: React.FC = () => {
   const fasilitas = [
@@ -24,7 +26,8 @@ const AnggotaSection: React.FC = () => {
     },
     {
       id: 4,
-      icon: <BiDollar />,
+      // 2. Ganti ikon di sini agar sesuai gambar
+      icon: <FaDollarSign />,
       title: "SHU (Sisa Hasil Usaha)",
       desc: "Pembagian keuntungan koperasi setiap tahun kepada anggota berdasarkan partisipasi dan kontribusi",
     },

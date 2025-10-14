@@ -372,10 +372,17 @@ html, body {
 /* ================= ANGGOTA SECTION ================== */
 
 .fasilitas-section {
-  background-color: #263c28;
-  color: white;
+  /* Definisikan variabel warna di sini */
+  --bg-section: #263c28;
+  --primary-yellow: #f7c35f;
+  --text-primary: #ffffff;
+  --card-bg: rgba(217, 217, 217, 0.1);
+
+  background-color: var(--bg-section);
+  color: var(--text-primary);
   padding: 80px 10%;
   text-align: center;
+  box-sizing: border-box; /* Tambahan agar padding tidak merusak layout */
 }
 
 .fasilitas-title {
@@ -384,10 +391,10 @@ html, body {
 
 .fasilitas-title .subtitle {
   font-family: "Century Gothic", sans-serif;
-  font-size: 20px;
+  font-size: 30px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 10px;
 }
 
@@ -395,7 +402,8 @@ html, body {
   font-family: "Livvic", sans-serif;
   font-weight: 700;
   font-size: 50px;
-  color: #ffffff;
+  color: var(--text-primary);
+  margin: 0; /* Hapus margin default dari h2 */
 }
 
 .fasilitas-grid {
@@ -406,12 +414,14 @@ html, body {
 }
 
 .fasilitas-card {
-  background: rgba(217, 217, 217, 0.1);
+  background: var(--card-bg);
   backdrop-filter: blur(25px);
   border-radius: 15px;
   width: 300px;
-  height: 290px;
+  /* Hapus height tetap agar lebih fleksibel */
+  min-height: 290px;
   padding: 35px 40px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -426,8 +436,8 @@ html, body {
 }
 
 .fasilitas-icon {
-  background-color: #f7c35f;
-  color: #263c28;
+  background-color: var(--primary-yellow);
+  color: var(--bg-section);
   font-size: 2.2rem;
   border-radius: 10px;
   width: 60px;
@@ -435,6 +445,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0; /* Mencegah ikon menyusut */
 }
 
 .fasilitas-card h3 {
@@ -442,23 +453,22 @@ html, body {
   font-weight: 600;
   font-size: 20px;
   margin: 0;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .fasilitas-card p {
   font-family: "Livvic", sans-serif;
   font-size: 18px;
   line-height: 25px;
-  color: #ffffff;
+  color: var(--text-primary);
   opacity: 0.9;
 }
 
-/* Responsif */
+/* Responsif (sudah bagus, tidak perlu diubah) */
 @media (max-width: 1024px) {
   .fasilitas-grid {
     gap: 20px;
   }
-
   .fasilitas-card {
     width: 45%;
     height: auto;
@@ -469,69 +479,58 @@ html, body {
   .fasilitas-card {
     width: 100%;
   }
-
   .fasilitas-title h2 {
     font-size: 36px;
   }
 }
 
 
-/* ================= KEUNTUNGAN & KERUGIAN SECTION ================== */
+/* ================= KEUNTUNGAN & KERUGIAN SECTION (DIPERBAIKI) ================== */
 
 .keuntungan-section {
-  position: relative;
-  width: 100%;
-  height: 705px;
-  background-color: #6d8c54;
   display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: 705px;
+  background-color: #6d8c54;
   overflow: hidden;
 }
 
 .bg-image {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 841px;
-  height: 100%;
+  flex: 1;
+  min-width: 400px;
   object-fit: cover;
 }
 
 .keuntungan-content {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: calc(100% - 841px);
-  height: 100%;
-  padding: 80px 120px;
+  flex: 1;
+  min-width: 400px;
+  padding: 80px 100px;
   color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .section-title {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 60px;
-}
-
-.subtitle {
-  font-family: 'Cabin Condensed', sans-serif;
-  font-size: 20px;
-  text-transform: uppercase;
+  margin-bottom: 50px;
 }
 
 .title {
   font-family: 'Livvic', sans-serif;
   font-size: 50px;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .info-group {
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: 40px;
 }
 
 .info-item {
@@ -550,11 +549,18 @@ html, body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Efek transisi */
+}
+
+.icon-circle:hover {
+  transform: scale(1.1); /* Sedikit membesar saat disentuh kursor */
+  background-color: #4b623d; /* Warna sedikit lebih terang */
 }
 
 .icon {
   width: 50px;
   height: 50px;
+  object-fit: contain; /* Pastikan ikon tidak terpotong */
 }
 
 .info-text h2 {
@@ -576,6 +582,15 @@ html, body {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+@media (max-width: 900px) {
+  .keuntungan-content {
+    padding: 60px 40px;
+  }
+  .bg-image {
+    max-height: 400px;
+  }
+}
+
 /* ================= PRODUCT INFORMATION ================== */
 
 
@@ -592,7 +607,7 @@ html, body {
 }
 
 .subtitle {
-  color: #f7c35f;
+  color: white;
   letter-spacing: 2px;
   font-weight: 600;
   text-transform: uppercase;
@@ -603,6 +618,7 @@ html, body {
   font-size: 2.5rem;
   font-weight: 700;
   margin-top: 10px;
+  color: #f7c35f;
 }
 
 .scroll-container {
@@ -703,3 +719,234 @@ html, body {
   }
 }
 
+
+/* ================= FOOTER ================== */
+
+.footer {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-family: "Century Gothic", sans-serif;
+  padding: 60px 100px 30px 100px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- Grid Layout --- */
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 60px;
+  flex-wrap: nowrap;
+}
+
+/* --- LEFT --- */
+.footer-left {
+  flex: 1.2;
+  max-width: 450px;
+}
+
+.footer-left h2 {
+  font-family: "Livvic", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.footer-left p {
+  font-size: 15px;
+  line-height: 24px;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.divider {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 20px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 20px;
+}
+
+.social-icons a {
+  color: #f7c35f;
+  font-size: 22px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+  transform: scale(1.2);
+  color: #ffffff;
+}
+
+/* --- MIDDLE (Group Members) --- */
+.footer-middle {
+  flex: 1;
+  text-align: center;
+}
+
+.footer-middle h3 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #f7c35f;
+  margin-bottom: 20px;
+}
+
+.footer-middle ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: inline-block;
+  text-align: left;
+}
+
+.footer-middle li {
+  margin-bottom: 10px;
+}
+
+.footer-middle a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.footer-middle a:hover {
+  color: #f7c35f;
+  text-shadow: 0 0 8px rgba(247, 195, 95, 0.7);
+  transform: translateY(-2px);
+}
+
+/* --- RIGHT (Kritik & Saran) --- */
+.footer-right {
+  flex: 1;
+  max-width: 340px;
+}
+
+.footer-right h3 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #f7c35f;
+  margin-bottom: 20px;
+}
+
+.footer-right p {
+  font-size: 15px;
+  line-height: 24px;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+/* Form Kritik & Saran */
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: #263c28;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  resize: none;
+}
+
+.feedback-form input::placeholder,
+.feedback-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.feedback-form button {
+  align-self: flex-end;
+  background-color: #f7c35f;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.feedback-form button:hover {
+  background-color: #ffcf6b;
+  transform: scale(1.05);
+}
+
+/* --- Divider --- */
+.footer-divider {
+  margin-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- Bottom --- */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #ffffff;
+}
+
+.footer-links {
+  display: flex;
+  gap: 25px;
+}
+
+.footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #f7c35f;
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 1024px) {
+  .footer {
+    padding: 50px 60px;
+  }
+
+  .footer-container {
+    flex-wrap: wrap;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .footer-left,
+  .footer-middle,
+  .footer-right {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .footer-right form {
+    align-items: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}
