@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "../../../style/Transaksi/pembelian.css";
 import Pagination from "./Pagination";
-import AddPembelian from "./AddPembelian"; // ✅ Tambahan
+import AddPembelian from "./AddPembelian";
+import AddCsvPembelian from "./AddCsvPembelian";
 
 const ITEMS_PER_PAGE = 10;
-const BASE_URL = "http://172.20.10.3:3001";
+const BASE_URL = "http://172.16.21.128:3001";
 
 interface PembelianItem {
   _id: string;
@@ -34,8 +35,9 @@ const PembelianTable: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  // ✅ State untuk modal tambah
+  // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showCsvModal, setShowCsvModal] = useState(false);
 
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
@@ -74,7 +76,6 @@ const PembelianTable: React.FC = () => {
     fetchData(1, search);
   };
 
-  // ✅ Fungsi kirim data baru ke server
   const handleAddSubmit = async (newData: any) => {
     try {
       const res = await fetch(`${BASE_URL}/api/pembelian`, {
@@ -93,6 +94,12 @@ const PembelianTable: React.FC = () => {
       console.error(err);
       alert("Terjadi kesalahan");
     }
+  };
+
+  // Refresh data setelah upload CSV berhasil
+  const handleCsvUploaded = () => {
+    setShowCsvModal(false);
+    fetchData(currentPage);
   };
 
   useEffect(() => {
@@ -118,10 +125,13 @@ const PembelianTable: React.FC = () => {
         </button>
       </form>
 
-      {/* ✅ Tombol tambah */}
+      {/* ✅ Tombol tambah & upload CSV */}
       <div className="table-header">
         <button className="add-btn" onClick={() => setShowAddModal(true)}>
           + Tambah Pembelian
+        </button>
+        <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
+          ⬆️ Upload CSV
         </button>
       </div>
 
@@ -172,12 +182,31 @@ const PembelianTable: React.FC = () => {
         </>
       )}
 
-      {/* ✅ Modal Tambah */}
+      {/* Modal Tambah Pembelian */}
       {showAddModal && (
         <AddPembelian
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddSubmit}
         />
+      )}
+
+      {/* Modal Upload CSV */}
+      {showCsvModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-btn" onClick={() => setShowCsvModal(false)}>
+              ✖
+            </button>
+            <AddCsvPembelian />
+            <button
+              className="refresh-btn"
+              onClick={handleCsvUploaded}
+              style={{ marginTop: "10px" }}
+            >
+              🔄 Refresh Data
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

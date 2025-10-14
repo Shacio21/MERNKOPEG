@@ -261,3 +261,136 @@
 .add-btn:hover {
   background-color: #45694e;
 }
+
+
+/* ============ CSV Upload Container ============ */
+.csv-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.csv-title {
+  font-size: 1.5rem;
+  color: #344c38;
+  margin-bottom: 20px;
+}
+
+/* Form */
+.csv-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.csv-input {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+}
+
+.csv-btn {
+  background-color: #344c38;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.csv-btn:hover:not(:disabled) {
+  background-color: #45694e;
+}
+
+.csv-btn:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+/* Message */
+.csv-message {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.csv-message.success {
+  color: green;
+}
+
+.csv-message.error {
+  color: red;
+}
+
+/* Info */
+.csv-info {
+  margin-top: 20px;
+  text-align: left;
+  font-size: 13px;
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  color: #344c38;
+}
+
+.csv-info ul {
+  margin-top: 8px;
+  padding-left: 18px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.csv-btn {
+  margin-left: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.csv-btn:hover {
+  background-color: #0056b3;
+}
