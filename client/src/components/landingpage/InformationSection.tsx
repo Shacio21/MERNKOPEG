@@ -22,7 +22,7 @@ const InformationSection: React.FC = () => {
 
       <div className="intro-text">
         <div className="intro-title">
-          <p className="intro-sub">OUR INTRODUCTION</p>
+          <p className="intro-sub">TENTANG KAMI</p>
           <h1>Koperasi Pegawai Politeknik Manufaktur</h1>
         </div>
 

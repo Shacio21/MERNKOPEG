@@ -210,20 +210,22 @@ html, body {
 /* ================= INFORMATION SECTION (SUDAH DIPERBAIKI) ================== */
 
 .intro-section {
-  position: relative; /* Tetap relative untuk elemen dekoratif */
-  width: 100%;
+  position: relative;
+  width: 100%; /* biar tetap proporsional dan tidak keluar layar */
   background-color: #6d8c54;
-  display: flex; /* INI KUNCINYA: Mengaktifkan Flexbox */
-  align-items: center; /* Membuat kolom gambar dan teks sejajar di tengah */
-  justify-content: center; /* Posisikan item di tengah dengan jarak */
-  gap: 60px; /* Memberi jarak antar kolom gambar dan teks */
-  padding: 80px 40px; /* Memberi ruang di dalam section */
-  box-sizing: border-box; /* Agar padding tidak menambah lebar total */
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 80px 40px;
+  box-sizing: border-box;
+  overflow: hidden; /* cegah isi keluar ke kanan/kiri */
   font-family: 'Livvic', sans-serif;
   color: #ffffff;
-  min-height: 910px; /* Gunakan min-height agar lebih fleksibel */
+  min-height: 910px;
 }
+
+
 
 /* Elemen dekoratif bisa tetap menggunakan position: absolute */
 .intro-left-bg {
@@ -591,11 +593,10 @@ html, body {
   }
 }
 
-/* ================= PRODUCT INFORMATION ================== */
-
+/* ================= PRODUCT SLIDER (MARQUEE) ================== */
 
 .explore-section {
-  padding: 80px 5%;
+  padding: 80px 0; /* Ubah padding agar slider bisa menempel ke tepi */
   background-color: #263c28;
   color: white;
   text-align: center;
@@ -604,6 +605,7 @@ html, body {
 
 .explore-title {
   margin-bottom: 50px;
+  padding: 0 5%; /* Beri padding di sini agar judul tidak menempel */
 }
 
 .subtitle {
@@ -621,26 +623,49 @@ html, body {
   color: #f7c35f;
 }
 
+/* Container utama sebagai "viewport" */
 .scroll-container {
+  width: 100%;
+  overflow: hidden;
+  /* Properti untuk menyamarkan tepi agar terlihat menyatu */
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* Konten yang akan bergerak */
+.scroll-content {
   display: flex;
-  overflow-x: auto;
-  gap: 20px;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 20px;
-  scrollbar-width: none; /* Firefox */
+  gap: 25px;
+  width: fit-content; /* Lebar sesuai total konten di dalamnya */
+  /* Animasi scroll */
+  animation: scroll 40s linear infinite;
 }
 
-.scroll-container::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+/* Jeda animasi saat kursor di atasnya */
+.scroll-container:hover .scroll-content {
+  animation-play-state: paused;
 }
 
+/* Definisi animasi scroll */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Bergerak ke kiri sejauh setengah dari total lebar (karena item diduplikasi) */
+    transform: translateX(-50%);
+  }
+}
+
+/* Kartu produk */
 .product-card {
-  flex: 0 0 calc(20% - 10px); /* 5 per tampilan */
-  position: relative;
+  width: 260px;
+  flex-shrink: 0; /* Mencegah kartu menyusut */
   border-radius: 15px;
   overflow: hidden;
-  cursor: pointer;
-  scroll-snap-align: start;
+  background-color: #1b2b1d;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
   transition: transform 0.3s ease;
 }
 
@@ -648,76 +673,31 @@ html, body {
   transform: translateY(-8px);
 }
 
-.product-image {
+.product-card img {
   width: 100%;
-  height: 250px;
+  height: 200px;
   object-fit: cover;
-  display: block;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.8) 100%);
-  opacity: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 20px;
-  transition: opacity 0.3s ease;
+.card-text {
+  padding: 15px;
 }
 
-.product-card:hover .overlay {
-  opacity: 1;
-}
-
-.text {
-  text-align: left;
-}
-
-.category {
+.card-text h3 {
+  font-size: 1.2rem;
   color: #f7c35f;
-  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.card-text p {
   font-size: 0.9rem;
-  margin-bottom: 5px;
-}
-
-.text h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: white;
-  max-width: 180px;
+  color: #ddd;
   line-height: 1.3;
+  margin: 0;
 }
 
-.arrow {
-  font-size: 1.8rem;
-  color: #f7c35f;
-  transition: transform 0.3s ease;
-}
 
-.product-card:hover .arrow {
-  transform: translateX(6px);
-}
-
-/* Responsif */
-@media (max-width: 1024px) {
-  .product-card {
-    flex: 0 0 calc(33.33% - 10px); /* 3 per tampilan */
-  }
-}
-
-@media (max-width: 768px) {
-  .product-card {
-    flex: 0 0 calc(50% - 10px); /* 2 per tampilan */
-  }
-}
-
-@media (max-width: 480px) {
-  .product-card {
-    flex: 0 0 100%; /* 1 per tampilan */
-  }
-}
 
 
 /* ================= FOOTER ================== */
