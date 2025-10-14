@@ -205,3 +205,152 @@ html, body {
 .hero-button:hover {
   background: #e5b84f;
 }
+
+
+/* ================= INFORMATION SECTION ================== */
+
+.intro-section {
+  position: relative;
+  width: 100%;
+  height: 910px;
+  background-color: #1f3221;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: 'Livvic', sans-serif;
+  color: #ffffff;
+}
+
+.intro-left-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 658px;
+  height: 497px;
+  background: #263c28;
+}
+
+.intro-yellow-bar {
+  position: absolute;
+  left: 220px;
+  top: 473px;
+  width: 20px;
+  height: 258px;
+  background: #f7c35f;
+  border-radius: 5px 0 0 5px;
+}
+
+.intro-image-container {
+  position: absolute;
+  left: 240px;
+  top: 100px;
+}
+
+.intro-image {
+  width: 564px;
+  height: 651px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+}
+
+.project-card {
+  position: absolute;
+  bottom: -40px;
+  left: 60px;
+  width: 428px;
+  height: 140px;
+  background: #6d8c54;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  gap: 30px;
+}
+
+.project-icon {
+  width: 76px;
+  height: 70px;
+  background-color: #f7c35f;
+  border-radius: 8px;
+}
+
+.project-line {
+  width: 1px;
+  height: 77px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.project-text h2 {
+  font-family: 'Mistral', cursive;
+  font-size: 40px;
+  margin: 0;
+}
+
+.project-text p {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 4px 0 0;
+}
+
+.intro-text {
+  position: absolute;
+  left: 884px;
+  top: 119px;
+  width: 796px;
+  display: flex;
+  flex-direction: column;
+  gap: 55px;
+}
+
+.intro-sub {
+  font-family: 'Century Gothic', sans-serif;
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.intro-title h1 {
+  font-weight: 700;
+  font-size: 50px;
+  line-height: 63px;
+  margin: 0;
+  color: #ffffff;
+}
+
+.intro-desc h3 {
+  color: #f7c35f;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.intro-desc p {
+  font-family: 'Century Gothic', sans-serif;
+  font-size: 18px;
+  line-height: 27px;
+  color: #ffffff;
+}
+
+.intro-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.intro-list li::before {
+  content: '\2713'; /* check icon */
+  color: #f7c35f;
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+.intro-list li {
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}

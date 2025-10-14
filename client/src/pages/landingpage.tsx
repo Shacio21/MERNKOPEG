@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from '../components/landingpage/Navbar'
 import HeroSection from '../components/landingpage/HeroSection'
+import InformationSection from '../components/landingpage/InformationSection'
 import "../style/landingpage.css"
 
 const LandingPage: React.FC = () => {
@@ -8,6 +9,7 @@ const LandingPage: React.FC = () => {
     <div className='landing-page'>
       <Navbar />
       <HeroSection />
+      <InformationSection />
     </div>
   )
 }
