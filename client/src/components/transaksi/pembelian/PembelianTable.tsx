@@ -3,6 +3,7 @@ import "../../../style/Transaksi/pembelian.css";
 import Pagination from "./Pagination";
 import AddPembelian from "./AddPembelian";
 import AddCsvPembelian from "./AddCsvPembelian";
+import Filter from "./Filter";
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = "http://172.16.21.128:3001";
@@ -39,6 +40,11 @@ const PembelianTable: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCsvModal, setShowCsvModal] = useState(false);
 
+  // Sorting/filter state
+  const [sortBy, setSortBy] = useState("Kode_Item");
+  const [order, setOrder] = useState("asc");
+
+  // ✅ Fetch data dari API dengan search + sort
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
@@ -47,7 +53,7 @@ const PembelianTable: React.FC = () => {
       const res = await fetch(
         `${BASE_URL}/api/pembelian?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
           searchTerm
-        )}`,
+        )}&sortBy=${sortBy}&order=${order}`,
         {
           headers: { Accept: "application/json" },
         }
@@ -70,12 +76,14 @@ const PembelianTable: React.FC = () => {
     }
   };
 
+  // 🔍 Search
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
     fetchData(1, search);
   };
 
+  // ➕ Tambah data
   const handleAddSubmit = async (newData: any) => {
     try {
       const res = await fetch(`${BASE_URL}/api/pembelian`, {
@@ -96,10 +104,18 @@ const PembelianTable: React.FC = () => {
     }
   };
 
-  // Refresh data setelah upload CSV berhasil
+  // ⬆️ CSV Upload
   const handleCsvUploaded = () => {
     setShowCsvModal(false);
     fetchData(currentPage);
+  };
+
+  // 🧭 Handle filter/sort perubahan
+  const handleFilterChange = (newSortBy: string, newOrder: string) => {
+    setSortBy(newSortBy);
+    setOrder(newOrder);
+    setCurrentPage(1);
+    fetchData(1, search);
   };
 
   useEffect(() => {
@@ -125,6 +141,11 @@ const PembelianTable: React.FC = () => {
         </button>
       </form>
 
+      {/* 🧭 Filter/Sort Section */}
+      <div className="filter-section">
+        <Filter onFilterChange={handleFilterChange} />
+      </div>
+
       {/* ✅ Tombol tambah & upload CSV */}
       <div className="table-header">
         <button className="add-btn" onClick={() => setShowAddModal(true)}>
@@ -135,6 +156,7 @@ const PembelianTable: React.FC = () => {
         </button>
       </div>
 
+      {/* 📊 Tabel Data */}
       {loading ? (
         <p>Loading data...</p>
       ) : error ? (

@@ -9,12 +9,12 @@ interface TransaksiLayoutProps {
 
 const TransaksiLayout: React.FC<TransaksiLayoutProps> = ({ children }) => {
   return (
-    <div className="transaksi-layout">
+    <div >
       {/* Sidebar */}
       <SidebarTransaksi />
 
       {/* Main Content */}
-      <div className="transaksi-layout-content">
+      <div >
 
         {/* Page Content */}
         {children ? children : <Outlet />}

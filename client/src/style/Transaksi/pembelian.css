@@ -394,3 +394,61 @@
 .csv-btn:hover {
   background-color: #0056b3;
 }
+
+/* ============ Pembelian ============ */
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  background: #f7f9fc;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.filter-label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.filter-select {
+  margin-left: 8px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.filter-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.filter-btn:hover {
+  background-color: #0056b3;
+}
+
+.filter-button-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.filter-btn.reset-btn {
+  background-color: #ccc;
+  color: #333;
+}
+
+.filter-btn.reset-btn:hover {
+  background-color: #aaa;
+}
