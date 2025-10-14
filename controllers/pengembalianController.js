@@ -15,8 +15,33 @@ exports.createPengembalian = async (req, res) => {
 
 exports.getPengembalian = async (req, res) => {
   try {
-    const pengembalian = await Pengembalian.find();
-    res.json(pengembalian);
+    // ambil query dari URL → ?page=1&limit=10&search=namaBarang
+    const page = parseInt(req.query.page) || 1;      // halaman aktif
+    const limit = parseInt(req.query.limit) || 10;   // jumlah data per halaman
+    const skip = (page - 1) * limit;
+
+    // opsional: pencarian (misal berdasarkan namaBarang)
+    const search = req.query.search || "";
+    const query = search
+      ? { namaBarang: { $regex: search, $options: "i" } }
+      : {};
+
+    // ambil total data & data sesuai pagination
+    const totalData = await Pengembalian.countDocuments(query);
+    const pengembalian = await Pengembalian.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ tanggal: -1 }); // urutkan dari terbaru
+
+    // kirim hasil dalam format rapi
+    res.json({
+      success: true,
+      currentPage: page,
+      totalPages: Math.ceil(totalData / limit),
+      totalData,
+      data: pengembalian
+    });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

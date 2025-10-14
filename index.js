@@ -24,7 +24,7 @@ app.use('/api/pengembalian', pengembalianRoutes);
 app.use('/api/penjualan', penjualanRoutes);
 app.use('/api/pembelian', pembelianRoutes);
 app.use('/api/stok', stockRoutes);
-app.use('/keuntungan', keuntunganRoutes);
+app.use('/api/keuntungan', keuntunganRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is running...');
