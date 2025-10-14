@@ -1,0 +1,34 @@
+.laba-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  transition: 0.3s ease;
+}
+
+.laba-container:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.laba-title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.laba-chart-wrapper {
+  width: 100%;
+  height: 400px;
+}
+
+.laba-loading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #888;
+  margin-top: 100px;
+}
