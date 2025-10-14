@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/landingpage";
+import LoginForm from "./components/login/LoginForm";
 import TransaksiLayout from "./components/transaksi/TransaksiLayout";
 import Pembelian from "./pages/transaksi/Pembelian";
 
@@ -9,6 +10,9 @@ function App() {
       <Routes>
         {/* Landing Page */}
         <Route path="/" element={<LandingPage />} />
+
+        {/* Login Page */}
+        <Route path="/login" element={<LoginForm />} />
 
         {/* Admin Pages with Layout */}
         <Route path="/Transaksi" element={<TransaksiLayout/>}>
