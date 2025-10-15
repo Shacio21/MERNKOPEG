@@ -10,7 +10,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface PenjualanItem {
   _id: string;
-  Kode_Item: number;
+  Kode_Item: string;
   Nama_Item: string;
   Jenis: string;
   Jumlah: number;
@@ -181,7 +181,7 @@ const PenjualanTable: React.FC = () => {
             <tbody>
               {data.map((item) => (
                 <tr key={item._id}>
-                  <td>{item.Kode_Item}</td>
+                  <td>{item.Kode_Item || "-"}</td>
                   <td>{item.Nama_Item}</td>
                   <td>{item.Jenis}</td>
                   <td>{item.Jumlah}</td>

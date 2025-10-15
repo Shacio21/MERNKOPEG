@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../../../style/Transaksi/pembelian.css";
 import Pagination from "../pembelian/Pagination";
-import AddPembelian from "../pembelian/AddPembelian";
-import AddCsvPembelian from "../pembelian/AddCsvPembelian";
+import AddPengembalian from "./AddPengembalian";
+import AddCsvPengembalian from "./AddCsvPengembalian";
 import Filter from "../pembelian/Filter";
 
 const ITEMS_PER_PAGE = 10;
@@ -10,11 +10,13 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface PengembalianItem {
   _id: string;
-  Kode_Item: number;
+  No: number;
+  Kode_Item: string;
   Nama_Item: string;
-  Jenis: string;
-  Jumlah: number;
+  Jml: number;
   Satuan: string;
+  Harga: number;
+  ["Pot. %"]: number;
   Total_Harga: number;
   Bulan: string;
   Tahun: number;
@@ -44,26 +46,23 @@ const PengembalianTable: React.FC = () => {
   const [sortBy, setSortBy] = useState("Kode_Item");
   const [order, setOrder] = useState("asc");
 
-  // ✅ Fetch data dari API dengan search + sort
+  // ✅ Fetch data dari API
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
 
     try {
       const res = await fetch(
-        `${BASE_URL}/api/penjualan?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
+        `${BASE_URL}/api/pengembalian?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
           searchTerm
         )}&sortBy=${sortBy}&order=${order}`,
-        {
-          headers: { Accept: "application/json" },
-        }
+        { headers: { Accept: "application/json" } }
       );
 
       const text = await res.text();
-      console.log("📡 Raw API Response:", text);
+      console.log(res);
 
       const json: ApiResponse = JSON.parse(text);
-
       if (!json.success) throw new Error("Gagal mengambil data dari server");
 
       setData(json.data);
@@ -86,7 +85,7 @@ const PengembalianTable: React.FC = () => {
   // ➕ Tambah data
   const handleAddSubmit = async (newData: any) => {
     try {
-      const res = await fetch(`${BASE_URL}/api/penjualan`, {
+      const res = await fetch(`${BASE_URL}/api/pengembalian`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newData),
@@ -110,7 +109,7 @@ const PengembalianTable: React.FC = () => {
     fetchData(currentPage);
   };
 
-  // 🧭 Handle filter/sort perubahan
+  // 🧭 Filter/Sort perubahan
   const handleFilterChange = (newSortBy: string, newOrder: string) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
@@ -125,7 +124,7 @@ const PengembalianTable: React.FC = () => {
 
   return (
     <div className="pembelian-container">
-      <h2 className="pembelian-title">Tabel Penjualan</h2>
+      <h2 className="pembelian-title">Tabel Pengembalian</h2>
 
       {/* 🔍 Search Form */}
       <form onSubmit={handleSearchSubmit} className="search-form">
@@ -149,7 +148,7 @@ const PengembalianTable: React.FC = () => {
       {/* ✅ Tombol tambah & upload CSV */}
       <div className="table-header">
         <button className="add-btn" onClick={() => setShowAddModal(true)}>
-          + Tambah Pembelian
+          + Tambah Pengembalian
         </button>
         <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
           ⬆️ Upload CSV
@@ -168,12 +167,14 @@ const PengembalianTable: React.FC = () => {
           <table className="pembelian-table">
             <thead>
               <tr>
+                <th>No</th>
                 <th>Kode Item</th>
                 <th>Nama Item</th>
-                <th>Jenis</th>
                 <th>Jumlah</th>
                 <th>Satuan</th>
-                <th>Total Harga</th>
+                <th>Harga (Rp)</th>
+                <th>Pot. %</th>
+                <th>Total Harga (Rp)</th>
                 <th>Bulan</th>
                 <th>Tahun</th>
               </tr>
@@ -181,11 +182,13 @@ const PengembalianTable: React.FC = () => {
             <tbody>
               {data.map((item) => (
                 <tr key={item._id}>
+                  <td>{item.No}</td>
                   <td>{item.Kode_Item}</td>
                   <td>{item.Nama_Item}</td>
-                  <td>{item.Jenis}</td>
-                  <td>{item.Jumlah}</td>
+                  <td>{item.Jml}</td>
                   <td>{item.Satuan}</td>
+                  <td>Rp {item.Harga.toLocaleString("id-ID")}</td>
+                  <td>{item["Pot. %"]}</td>
                   <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
                   <td>{item.Bulan}</td>
                   <td>{item.Tahun}</td>
@@ -204,9 +207,9 @@ const PengembalianTable: React.FC = () => {
         </>
       )}
 
-      {/* Modal Tambah Pembelian */}
+      {/* Modal Tambah Pengembalian */}
       {showAddModal && (
-        <AddPembelian
+        <AddPengembalian
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddSubmit}
         />
@@ -219,7 +222,8 @@ const PengembalianTable: React.FC = () => {
             <button className="close-btn" onClick={() => setShowCsvModal(false)}>
               ✖
             </button>
-            <AddCsvPembelian />
+            {/* 🔽 URL CSV upload dibuat fleksibel */}
+            <AddCsvPengembalian />
             <button
               className="refresh-btn"
               onClick={handleCsvUploaded}

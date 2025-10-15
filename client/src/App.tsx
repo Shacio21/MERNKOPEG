@@ -6,6 +6,7 @@ import Pembelian from "./pages/transaksi/Pembelian";
 import Penjualan from "./pages/transaksi/Penjualan";
 import Rekap from "./pages/Rekap";
 import Stock from "./pages/Stock";
+import Pengembalian from "./pages/transaksi/Pengembalian";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/Transaksi" element={<TransaksiLayout/>}>
           <Route path="pembelian" element={<Pembelian />} />
           <Route path="penjualan" element={<Penjualan />} />
+          <Route path="pengembalian" element={<Pengembalian />} />
         </Route>
       </Routes>
     </BrowserRouter>
