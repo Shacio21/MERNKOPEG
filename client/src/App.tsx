@@ -3,7 +3,9 @@ import LandingPage from "./pages/landingpage";
 import LoginForm from "./components/login/LoginForm";
 import TransaksiLayout from "./components/transaksi/TransaksiLayout";
 import Pembelian from "./pages/transaksi/Pembelian";
+import Penjualan from "./pages/transaksi/Penjualan";
 import Rekap from "./pages/Rekap";
+import Stock from "./pages/Stock";
 
 function App() {
   return (
@@ -15,12 +17,16 @@ function App() {
         {/* Login Page */}
         <Route path="/login" element={<LoginForm />} />
 
-        {/* Login Page */}
+        {/* Rekap Page */}
         <Route path="/rekap" element={<Rekap />} />
+
+        {/* Stock Page */}
+        <Route path="/stock" element={<Stock />} />
 
         {/* Admin Pages with Layout */}
         <Route path="/Transaksi" element={<TransaksiLayout/>}>
           <Route path="pembelian" element={<Pembelian />} />
+          <Route path="penjualan" element={<Penjualan />} />
         </Route>
       </Routes>
     </BrowserRouter>

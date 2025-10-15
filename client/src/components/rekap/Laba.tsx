@@ -20,7 +20,7 @@ interface LabaData {
   keuntungan: number;
 }
 
-const BASE_URL = "http://172.16.21.128:3001/api/keuntungan";
+const BASE_URL = "http://127.0.0.1:3001/api/keuntungan";
 
 const Laba: React.FC = () => {
   const [data, setData] = useState<LabaData[]>([]);

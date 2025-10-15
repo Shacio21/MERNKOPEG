@@ -49,7 +49,7 @@ const SidebarTransaksi: React.FC = () => {
                 </a>
 
                 <a
-                  href="#"
+                  href="/transaksi/penjualan"
                   className={`nav__link ${
                     activeLink === "Penjualan" ? "active" : ""
                   }`}

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "../../../style/Transaksi/pembelian.css";
-import Pagination from "./Pagination";
-import AddPembelian from "./AddPembelian";
-import AddCsvPembelian from "./AddCsvPembelian";
-import Filter from "./Filter";
+import Pagination from "../pembelian/Pagination";
+import AddPembelian from "../pembelian/AddPembelian";
+import AddCsvPembelian from "./AddCsvPenjualan";
+import Filter from "../pembelian/Filter";
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = "http://127.0.0.1:3001";
 
-interface PembelianItem {
+interface PenjualanItem {
   _id: string;
   Kode_Item: number;
   Nama_Item: string;
@@ -25,11 +25,11 @@ interface ApiResponse {
   currentPage: number;
   totalPages: number;
   totalData: number;
-  data: PembelianItem[];
+  data: PenjualanItem[];
 }
 
-const PembelianTable: React.FC = () => {
-  const [data, setData] = useState<PembelianItem[]>([]);
+const PenjualanTable: React.FC = () => {
+  const [data, setData] = useState<PenjualanItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -51,7 +51,7 @@ const PembelianTable: React.FC = () => {
 
     try {
       const res = await fetch(
-        `${BASE_URL}/api/pembelian?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
+        `${BASE_URL}/api/penjualan?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
           searchTerm
         )}&sortBy=${sortBy}&order=${order}`,
         {
@@ -86,7 +86,7 @@ const PembelianTable: React.FC = () => {
   // ➕ Tambah data
   const handleAddSubmit = async (newData: any) => {
     try {
-      const res = await fetch(`${BASE_URL}/api/pembelian`, {
+      const res = await fetch(`${BASE_URL}/api/penjualan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newData),
@@ -125,7 +125,7 @@ const PembelianTable: React.FC = () => {
 
   return (
     <div className="pembelian-container">
-      <h2 className="pembelian-title">Tabel Pembelian</h2>
+      <h2 className="pembelian-title">Tabel Penjualan</h2>
 
       {/* 🔍 Search Form */}
       <form onSubmit={handleSearchSubmit} className="search-form">
@@ -234,4 +234,4 @@ const PembelianTable: React.FC = () => {
   );
 };
 
-export default PembelianTable;
+export default PenjualanTable;

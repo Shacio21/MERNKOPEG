@@ -33,7 +33,7 @@ const AddCsvPembelian: React.FC = () => {
       setError(null);
       setMessage(null);
 
-      const res = await fetch(`${BASE_URL}/api/pembelian/upload-csv`, {
+      const res = await fetch(`${BASE_URL}/api/penjualan/upload-csv`, {
         method: "POST",
         body: formData,
       });

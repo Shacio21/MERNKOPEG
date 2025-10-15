@@ -20,10 +20,10 @@ const Navbar: React.FC = () => {
           <a href="/transaksi">Transaksi</a>
         </li>
         <li>
-          <a href="#">Rekap</a>
+          <a href="/rekap">Rekap</a>
         </li>
         <li>
-          <a href="#">Stock</a>
+          <a href="/stock">Stock</a>
         </li>
         <li>
           <a href="#">Prediksi</a>
