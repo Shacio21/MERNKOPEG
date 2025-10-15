@@ -6,12 +6,14 @@ const Stock = require("../models/stock");
 // Helper untuk ubah Bulan (string) ke angka
 function bulanKeAngka(bulan) {
   const daftarBulan = {
-    Januari: 1, Februari: 2, Maret: 3, April: 4,
-    Mei: 5, Juni: 6, Juli: 7, Agustus: 8,
-    September: 9, Oktober: 10, November: 11, Desember: 12
+    JANUARI: 1, FEBRUARI: 2, MARET: 3, APRIL: 4,
+    MEI: 5, JUNI: 6, JULI: 7, AGUSTUS: 8,
+    SEPTEMBER: 9, OKTOBER: 10, NOVEMBER: 11, DESEMBER: 12
   };
   return daftarBulan[bulan] || 0;
 }
+
+// Fungsi bantu buat format rupiah
 
 exports.prediksiPenjualan = async () => {
   const data = await Penjualan.find({});
@@ -29,9 +31,11 @@ exports.prediksiPenjualan = async () => {
   if (nilai.length < 2) return { prediksi: nilai[nilai.length - 1] };
 
   const growth = (nilai[nilai.length - 1] - nilai[nilai.length - 2]) / nilai[nilai.length - 2];
-  const prediksi = nilai[nilai.length - 1] * (1 + growth);
+  const perdiksi = nilai[nilai.length - 1] * (1 + growth);
+  const pertumbuhan = growth * 100;
+  const prediksi = Math.round(perdiksi);
 
-  return { bulanSelanjutnya: "Prediksi bulan depan", prediksi };
+  return { bulanSelanjutnya: "Prediksi bulan depan", prediksi, pertumbuhan };
 };
 
 exports.prediksiKeuntungan = async () => {
@@ -63,7 +67,7 @@ exports.prediksiKeuntungan = async () => {
   const growth = (values[values.length - 1] - values[values.length - 2]) / values[values.length - 2];
   const prediksi = values[values.length - 1] * (1 + growth);
 
-  return { prediksi };
+  return { prediksi: Math.round(prediksi), pertumbuhan: growth * 100 };
 };
 
 exports.prediksiStok = async () => {
@@ -84,5 +88,5 @@ exports.prediksiStok = async () => {
   const trend = values[values.length - 1] - values[values.length - 2];
   const prediksi = values[values.length - 1] + trend;
 
-  return { prediksi };
+  return { prediksi , pertumbuhan: (trend / values[values.length - 2]) * 100 };
 };
