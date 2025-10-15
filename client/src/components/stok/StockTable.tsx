@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../style/Transaksi/pembelian.css"; 
 
 const ITEMS_PER_PAGE = 10;
-const BASE_URL = "http://127.0.0.1:3001";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // ✅ Struktur data dari API stok total
 interface StokItem {

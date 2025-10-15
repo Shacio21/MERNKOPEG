@@ -6,7 +6,7 @@ import AddCsvPembelian from "../pembelian/AddCsvPembelian";
 import Filter from "../pembelian/Filter";
 
 const ITEMS_PER_PAGE = 10;
-const BASE_URL = "http://127.0.0.1:3001";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface PengembalianItem {
   _id: string;

@@ -20,7 +20,7 @@ interface LabaData {
   keuntungan: number;
 }
 
-const BASE_URL = "http://127.0.0.1:3001/api/keuntungan";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Laba: React.FC = () => {
   const [data, setData] = useState<LabaData[]>([]);
@@ -29,7 +29,7 @@ const Laba: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(BASE_URL);
+        const res = await fetch(`${BASE_URL}/api/keuntungan`);
         const json = await res.json();
         // Sort urut dari Januari sampai Desember
         const urutanBulan = [
