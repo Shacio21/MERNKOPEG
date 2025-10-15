@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Stock = require("../models/stock");
+const fs = require("fs");
+const csv = require("csvtojson");
 
 exports.refreshStock = async (req, res) => {
   try {
@@ -290,5 +292,87 @@ exports.getTotalStockPerItem = async (req, res) => {
   }
 };
 
+exports.stockOpname = async (req, res) => {
+  try {
+    // ✅ Pastikan ada file CSV yang diupload
+    if (!req.file) {
+      return res.status(400).json({ message: "File CSV tidak ditemukan." });
+    }
 
+    // 🔄 Baca CSV → ubah jadi array JSON
+    const csvData = await csv().fromFile(req.file.path);
+
+    // 🧠 Ambil semua data stok dari DB
+    const dbData = await Stock.find().lean();
+
+    const perbedaan = [];
+
+    // 🔍 Looping data CSV dan bandingkan
+    csvData.forEach((csvItem) => {
+      // Temukan data DB yang memiliki Kode_Item, Bulan, dan Tahun yang sama
+      const dbItem = dbData.find(
+        (d) =>
+          Number(d.Kode_Item) === Number(csvItem.Kode_Item) &&
+          d.Bulan?.toUpperCase() === csvItem.Bulan?.toUpperCase() &&
+          Number(d.Tahun) === Number(csvItem.Tahun)
+      );
+
+      if (dbItem) {
+        // Bandingkan field penting
+        const fields = ["Jumlah_Beli", "Jumlah_Jual", "Jumlah_Retur", "Stok_Akhir"];
+        const berbeda = fields.some(
+          (f) => Number(dbItem[f]) !== Number(csvItem[f])
+        );
+
+        if (berbeda) {
+          perbedaan.push({
+            Kode_Item: csvItem.Kode_Item,
+            Nama_Item: csvItem.Nama_Item || dbItem.Nama_Item,
+            Bulan: csvItem.Bulan,
+            Tahun: csvItem.Tahun,
+            CSV: {
+              Jumlah_Beli: csvItem.Jumlah_Beli,
+              Jumlah_Jual: csvItem.Jumlah_Jual,
+              Jumlah_Retur: csvItem.Jumlah_Retur,
+              Stok_Akhir: csvItem.Stok_Akhir,
+            },
+            DB: {
+              Jumlah_Beli: dbItem.Jumlah_Beli,
+              Jumlah_Jual: dbItem.Jumlah_Jual,
+              Jumlah_Retur: dbItem.Jumlah_Retur,
+              Stok_Akhir: dbItem.Stok_Akhir,
+            },
+          });
+        }
+      } else {
+        // Data tidak ditemukan di DB dengan kombinasi Kode_Item + Bulan + Tahun yang sama
+        perbedaan.push({
+          Kode_Item: csvItem.Kode_Item,
+          Nama_Item: csvItem.Nama_Item,
+          Bulan: csvItem.Bulan,
+          Tahun: csvItem.Tahun,
+          Keterangan: "Data tidak ditemukan di database untuk bulan & tahun ini",
+        });
+      }
+    });
+
+    // 🧹 Hapus file CSV setelah selesai (opsional)
+    fs.unlink(req.file.path, (err) => {
+      if (err) console.warn("Gagal hapus file upload:", err);
+    });
+
+    // 📤 Respon hasil
+    if (perbedaan.length > 0) {
+      return res.status(200).json({
+        message: "Ditemukan perbedaan data stok berdasarkan Kode_Item, Bulan, dan Tahun",
+        perbedaan,
+      });
+    } else {
+      return res.status(200).json({ message: "Tidak ada perbedaan data." });
+    }
+  } catch (error) {
+    console.error("Error saat stok opname:", error);
+    return res.status(500).json({ message: "Terjadi kesalahan server." });
+  }
+};
 

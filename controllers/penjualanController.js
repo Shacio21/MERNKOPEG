@@ -21,7 +21,6 @@ exports.getPenjualan = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // 🔍 Search global: cek apakah search adalah angka atau teks
     const search = req.query.search || "";
     let query = {};
 
@@ -34,6 +33,7 @@ exports.getPenjualan = async (req, res) => {
               { Jumlah: Number(search) },
               { Total_Harga: Number(search) },
               { Tahun: Number(search) },
+              { Kode_Item: search } // tetap string
             ],
           }
         : {
@@ -47,7 +47,6 @@ exports.getPenjualan = async (req, res) => {
           };
     }
 
-    // 🧩 Sort dinamis
     const sortField = req.query.sortBy || "Tahun";
     const sortOrder = req.query.order === "desc" ? -1 : 1;
 
@@ -59,11 +58,26 @@ exports.getPenjualan = async (req, res) => {
 
     const totalData = await Penjualan.countDocuments(query);
 
+    // 🧩 Pipeline baru dengan aman untuk angka besar
     const pipeline = [
       { $match: query },
       {
         $addFields: {
           bulanIndex: { $indexOfArray: [bulanOrder, "$Bulan"] },
+          kodeItemNum: {
+            $cond: {
+              if: { $regexMatch: { input: "$Kode_Item", regex: /^[0-9]+$/ } },
+              then: {
+                $convert: {
+                  input: "$Kode_Item",
+                  to: "decimal",     // ✅ ubah ke decimal agar tidak overflow
+                  onError: 0,
+                  onNull: 0
+                }
+              },
+              else: 0
+            }
+          }
         },
       },
     ];
@@ -71,6 +85,8 @@ exports.getPenjualan = async (req, res) => {
     const sortObj = {};
     if (sortField === "Bulan") {
       sortObj["bulanIndex"] = sortOrder;
+    } else if (sortField === "Kode_Item") {
+      sortObj["kodeItemNum"] = sortOrder;
     } else {
       sortObj[sortField] = sortOrder;
     }
@@ -96,8 +112,7 @@ exports.getPenjualan = async (req, res) => {
   }
 };
 
-
-
+// 📦 Import CSV
 exports.createPenjualanCsv = async (req, res) => {
   try {
     if (!req.file) {
@@ -107,7 +122,7 @@ exports.createPenjualanCsv = async (req, res) => {
     const jsonArray = await csv().fromFile(req.file.path);
     await savePenjualanFromCsv(jsonArray);
 
-    fs.unlinkSync(req.file.path); // hapus file setelah upload
+    fs.unlinkSync(req.file.path);
 
     res.status(201).json({
       success: true,

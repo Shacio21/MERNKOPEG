@@ -15,34 +15,103 @@ exports.createPengembalian = async (req, res) => {
 
 exports.getPengembalian = async (req, res) => {
   try {
-    // ambil query dari URL → ?page=1&limit=10&search=namaBarang
-    const page = parseInt(req.query.page) || 1;      // halaman aktif
-    const limit = parseInt(req.query.limit) || 10;   // jumlah data per halaman
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // opsional: pencarian (misal berdasarkan namaBarang)
     const search = req.query.search || "";
-    const query = search
-      ? { namaBarang: { $regex: search, $options: "i" } }
-      : {};
+    let query = {};
 
-    // ambil total data & data sesuai pagination
+    // 🔍 Jika ada pencarian
+    if (search) {
+      const isNumber = !isNaN(search);
+
+      query = isNumber
+        ? {
+            $or: [
+              { Jml: Number(search) },
+              { Harga: Number(search) },
+              { Potongan: Number(search) },
+              { Total_Harga: Number(search) },
+              { Tahun: Number(search) },
+              { Kode_Item: search }
+            ],
+          }
+        : {
+            $or: [
+              { Kode_Item: { $regex: search, $options: "i" } },
+              { Nama_Item: { $regex: search, $options: "i" } },
+              { Satuan: { $regex: search, $options: "i" } },
+              { Bulan: { $regex: search, $options: "i" } },
+            ],
+          };
+    }
+
+    // 🧩 Sorting dinamis
+    const sortField = req.query.sortBy || "Tahun";
+    const sortOrder = req.query.order === "desc" ? -1 : 1;
+
+    const bulanOrder = [
+      "JANUARI", "FEBRUARI", "MARET", "APRIL",
+      "MEI", "JUNI", "JULI", "AGUSTUS",
+      "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
+    ];
+
     const totalData = await Pengembalian.countDocuments(query);
-    const pengembalian = await Pengembalian.find(query)
-      .skip(skip)
-      .limit(limit)
-      .sort({ tanggal: -1 }); // urutkan dari terbaru
 
-    // kirim hasil dalam format rapi
+    // 🧠 Gunakan agregasi agar bisa sorting custom & convert field
+    const pipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          bulanIndex: { $indexOfArray: [bulanOrder, "$Bulan"] },
+          kodeItemNum: {
+            $cond: {
+              if: { $regexMatch: { input: "$Kode_Item", regex: /^[0-9]+$/ } },
+              then: {
+                $convert: {
+                  input: "$Kode_Item",
+                  to: "decimal",  // ✅ aman untuk angka besar (seperti barcode)
+                  onError: 0,
+                  onNull: 0
+                }
+              },
+              else: 0
+            }
+          }
+        }
+      }
+    ];
+
+    // 🔄 Tentukan prioritas sorting
+    const sortObj = {};
+    if (sortField === "Bulan") {
+      sortObj["bulanIndex"] = sortOrder;
+    } else if (sortField === "Kode_Item") {
+      sortObj["kodeItemNum"] = sortOrder;
+    } else {
+      sortObj[sortField] = sortOrder;
+    }
+
+    pipeline.push({ $sort: sortObj });
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
+
+    const pengembalian = await Pengembalian.aggregate(pipeline);
+
+    // 📦 Kirim hasil response
     res.json({
       success: true,
       currentPage: page,
       totalPages: Math.ceil(totalData / limit),
       totalData,
-      data: pengembalian
+      sortBy: sortField,
+      order: sortOrder === 1 ? "asc" : "desc",
+      data: pengembalian,
     });
 
   } catch (err) {
+    console.error('❌ Error getPengembalian:', err);
     res.status(500).json({ error: err.message });
   }
 };
