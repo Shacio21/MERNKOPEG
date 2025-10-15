@@ -1,0 +1,209 @@
+/* --- BARU: Global & Body Styling --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f7f9; /* Latar belakang abu-abu terang */
+  color: #333;
+}
+
+/* Main container for the stock table page */
+.stock-container {
+  width: 95%;
+  max-width: 1200px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 20px; /* Sedikit lebih bulat */
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1); /* Shadow lebih lembut */
+  padding: 30px 35px;
+}
+
+/* --- DIPERBAIKI: Judul dengan Ikon --- */
+.stock-title {
+  display: flex; /* Menggunakan flexbox */
+  align-items: center;
+  justify-content: center;
+  gap: 12px; /* Jarak antara ikon dan teks */
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+/* --- Container untuk semua kontrol filter & search --- */
+.controls-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+  align-items: center;
+}
+
+.search-container {
+  flex-grow: 1;
+  min-width: 250px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 10px; /* Sedikit lebih bulat */
+  border: 1px solid #dfe4ea;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-select,
+.filter-input-year {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #dfe4ea;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+.filter-input-year {
+  width: 100px;
+}
+
+.filter-select:focus,
+.filter-input-year:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+/* Wrapper untuk tabel agar bisa di-scroll horizontal */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* Main table styling */
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.stock-table th,
+.stock-table td {
+  padding: 15px 18px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle; /* --- BARU: Agar teks di tengah secara vertikal --- */
+}
+
+/* --- DIPERBAIKI: Table header styling --- */
+.stock-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  text-transform: uppercase; /* Teks menjadi kapital */
+  font-size: 0.8rem; /* Sedikit lebih kecil */
+  letter-spacing: 0.5px; /* Jarak antar huruf */
+}
+
+.stock-table th:hover {
+  background-color: #e9ecef;
+}
+
+.sort-indicator {
+  color: #3498db;
+  margin-left: 4px;
+}
+
+/* --- DIPERBAIKI: Table body row styling --- */
+.stock-table tbody tr {
+  transition: background-color 0.25s ease; /* Transisi hover lebih halus */
+}
+
+.stock-table tbody tr:last-child td {
+  border-bottom: none; /* Hilangkan border di baris terakhir */
+}
+
+.stock-table tbody tr:hover {
+  background-color: #f5fafe;
+}
+
+/* --- BARU: Conditional styling untuk stok negatif --- */
+.stock-negative {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* Pagination controls styling */
+.pagination {
+  display: flex;
+  justify-content: space-between; /* --- DIPERBAIKI: Mendorong tombol ke ujung --- */
+  align-items: center;
+  padding: 20px 10px 0; /* Memberi jarak dari tabel */
+  color: #555;
+}
+
+.pagination button {
+  background-color: #ffffff;
+  border: 1px solid #dfe4ea;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #3498db;
+  color: #ffffff;
+  border-color: #3498db;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+}
+
+.pagination button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Unified style for loading and error messages */
+.status-message {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  padding: 50px 20px;
+  font-weight: 500;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.status-message.error {
+  color: #e74c3c;
+  background-color: #fbecec;
+}
+
+/* --- BARU: Media Query untuk Mobile --- */
+@media (max-width: 768px) {
+  .controls-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .stock-title {
+    font-size: 1.5rem;
+  }
+  
+  .stock-container {
+    padding: 20px;
+  }
+}
