@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
           <a href="/rekap">Rekap</a>
         </li>
         <li>
-          <a href="/stock">Stock</a>
+          <a href="/stok">Stock</a>
         </li>
         <li>
           <a href="#">Prediksi</a>
