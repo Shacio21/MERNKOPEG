@@ -18,7 +18,7 @@ const SidebarTransaksi: React.FC = () => {
       {/* Header */}
       <header className="header">
         <div className="header__container">
-          <a href="#" className="header__logo">
+          <a href="/" className="header__logo">
             Koperasi Pegawai
           </a>
         </div>
@@ -71,6 +71,46 @@ const SidebarTransaksi: React.FC = () => {
                 </a>
               </div>
             </div>
+
+            <div className="nav__list">
+              <div className="nav__items">
+                <h3 className="nav__subtitle">Rekap</h3>
+
+                <a
+                  href="/transaksi/pembelian"
+                  className={`nav__link ${
+                    activeLink === "Pembelian" ? "active" : ""
+                  }`}
+                  onClick={() => handleLinkClick("Pembelian")}
+                >
+                  <BiCartAdd className="nav__icon" />
+                  <span className="nav__name">Pembelian</span>
+                </a>
+
+                <a
+                  href="/transaksi/penjualan"
+                  className={`nav__link ${
+                    activeLink === "Penjualan" ? "active" : ""
+                  }`}
+                  onClick={() => handleLinkClick("Penjualan")}
+                >
+                  <BiReceipt className="nav__icon" />
+                  <span className="nav__name">Penjualan</span>
+                </a>
+
+                <a
+                  href="/transaksi/pengembalian"
+                  className={`nav__link ${
+                    activeLink === "Pengembalian" ? "active" : ""
+                  }`}
+                  onClick={() => handleLinkClick("Pengembalian")}
+                >
+                  <BiRefresh className="nav__icon" />
+                  <span className="nav__name">Pengembalian</span>
+                </a>
+              </div>
+            </div>
+
           </div>
 
           <a href="/" className="nav__link nav__logout">

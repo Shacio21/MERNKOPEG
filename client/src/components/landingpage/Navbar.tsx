@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
           <a href="#">Home</a>
         </li>
         <li>
-          <a href="/transaksi">Transaksi</a>
+          <a href="/transaksi/pembelian">Transaksi</a>
         </li>
         <li>
           <a href="/rekap">Rekap</a>
