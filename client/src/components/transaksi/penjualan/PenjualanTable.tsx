@@ -4,14 +4,14 @@ import Pagination from "../pembelian/Pagination";
 import AddPembelian from "../pembelian/AddPembelian";
 import AddCsvPenjualan from "./AddCsvPenjualan";
 import Filter from "../pembelian/Filter";
-import UpdatePenjualan from "./UpdatePenjualan"; 
+import UpdatePenjualan from "./UpdatePenjualan";
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface PenjualanItem {
   _id: string;
-  Kode_Item: number; 
+  Kode_Item: number;
   Nama_Item: string;
   Jenis: string;
   Jumlah: number;
@@ -20,7 +20,6 @@ interface PenjualanItem {
   Bulan: string;
   Tahun: number;
 }
-
 
 interface ApiResponse {
   success: boolean;
@@ -46,23 +45,36 @@ const PenjualanTable: React.FC = () => {
   // Data yang dipilih untuk edit
   const [selectedData, setSelectedData] = useState<PenjualanItem | null>(null);
 
-  // Sorting/filter
+  // Sorting & filter
   const [sortBy, setSortBy] = useState("Kode_Item");
   const [order, setOrder] = useState("asc");
+  const [bulanFilter, setBulanFilter] = useState("");
+  const [tahunFilter, setTahunFilter] = useState(new Date().getFullYear().toString());
 
-  // ✅ Fetch data API
+  // ✅ Fetch data API dengan filter & sorting
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch(
-        `${BASE_URL}/api/penjualan?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
-          searchTerm
-        )}&sortBy=${sortBy}&order=${order}`,
-        { headers: { Accept: "application/json" } }
-      );
+      const url = new URL(`${BASE_URL}/api/penjualan`);
+      url.searchParams.append("page", page.toString());
+      url.searchParams.append("limit", ITEMS_PER_PAGE.toString());
+      url.searchParams.append("sortBy", sortBy);
+      url.searchParams.append("order", order);
+      url.searchParams.append("tahun", tahunFilter);
 
+      if (bulanFilter) {
+        url.searchParams.append("bulan", bulanFilter);
+      }
+
+      if (searchTerm) {
+        url.searchParams.append("search", searchTerm);
+      }
+
+      console.log("📡 Fetch Penjualan URL:", url.toString());
+
+      const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
       const text = await res.text();
       console.log("📡 Raw API Response (Penjualan):", text);
       const json: ApiResponse = JSON.parse(text);
@@ -148,10 +160,12 @@ const PenjualanTable: React.FC = () => {
     }
   };
 
-  // 🧭 Filter/sort
-  const handleFilterChange = (newSortBy: string, newOrder: string) => {
+  // 🧭 Filter/sort handler
+  const handleFilterChange = (newSortBy: string, newOrder: string, newBulan?: string, newTahun?: string) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
+    if (newBulan !== undefined) setBulanFilter(newBulan);
+    if (newTahun !== undefined) setTahunFilter(newTahun);
     setCurrentPage(1);
     fetchData(1, search);
   };
@@ -202,6 +216,7 @@ const PenjualanTable: React.FC = () => {
 
       {/* 🧭 Filter */}
       <div className="filter-section">
+        {/* Komponen Filter kamu sebaiknya punya dropdown bulan + tahun */}
         <Filter onFilterChange={handleFilterChange} />
       </div>
 

@@ -45,26 +45,32 @@ const PengembalianTable: React.FC = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   // Data yang dipilih untuk edit
-  const [selectedData, setSelectedData] = useState<PengembalianItem | null>(
-    null
-  );
+    const [selectedData, setSelectedData] = useState<PengembalianItem | null>(null);
 
   // Sorting/filter
   const [sortBy, setSortBy] = useState("Kode_Item");
   const [order, setOrder] = useState("asc");
+  const [bulan, setBulan] = useState<string>(""); // 🟡 Tambahan
+  const [tahun] = useState<number>(2025); // 🟡 Contoh static, bisa dibuat dropdown juga
 
-  // ✅ Fetch data API
+  // ✅ Fetch data API dengan filter
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch(
-        `${BASE_URL}/api/pengembalian?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
-          searchTerm
-        )}&sortBy=${sortBy}&order=${order}`,
-        { headers: { Accept: "application/json" } }
-      );
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      params.append("limit", ITEMS_PER_PAGE.toString());
+      params.append("search", searchTerm);
+      params.append("sortBy", sortBy);
+      params.append("order", order);
+      if (bulan) params.append("bulan", bulan);
+      if (tahun) params.append("tahun", tahun.toString());
+
+      const res = await fetch(`${BASE_URL}/api/pengembalian?${params.toString()}`, {
+        headers: { Accept: "application/json" },
+      });
 
       const text = await res.text();
       console.log("📡 Raw API Response (Pengembalian):", text);
@@ -155,9 +161,10 @@ const PengembalianTable: React.FC = () => {
   };
 
   // 🧭 Filter/sort
-  const handleFilterChange = (newSortBy: string, newOrder: string) => {
+  const handleFilterChange = (newSortBy: string, newOrder: string, newBulan?: string) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
+    setBulan(newBulan || "");
     setCurrentPage(1);
     fetchData(1, search);
   };

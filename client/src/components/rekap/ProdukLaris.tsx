@@ -20,7 +20,7 @@ interface ApiResponse {
   // Tambahkan properti lain dari API Anda jika ada, misal: total, page, etc.
 }
 
-const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:3001";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // Daftar bulan untuk filter dropdown
 const daftarBulan = [

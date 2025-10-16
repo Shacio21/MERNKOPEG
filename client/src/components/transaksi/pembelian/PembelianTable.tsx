@@ -4,7 +4,7 @@ import Pagination from "./Pagination";
 import AddPembelian from "./AddPembelian";
 import AddCsvPembelian from "./AddCsvPembelian";
 import Filter from "./Filter";
-import UpdatePembelian from "./UpdatePembelian"; // ✅ Tambahan
+import UpdatePembelian from "./UpdatePembelian";
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -42,25 +42,39 @@ const PembelianTable: React.FC = () => {
   const [showCsvModal, setShowCsvModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  // Data yang dipilih untuk diupdate
+  // Data yang dipilih untuk update
   const [selectedData, setSelectedData] = useState<PembelianItem | null>(null);
 
-  // Sorting/filter state
+  // Filter & Sort state
   const [sortBy, setSortBy] = useState("Kode_Item");
   const [order, setOrder] = useState("asc");
+  const [bulanFilter, setBulanFilter] = useState("");
+  const [tahunFilter, setTahunFilter] = useState(new Date().getFullYear().toString());
 
-  // ✅ Fetch data
+  // ✅ Fetch data dengan parameter lengkap
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch(
-        `${BASE_URL}/api/pembelian?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
-          searchTerm
-        )}&sortBy=${sortBy}&order=${order}`
-      );
+      const url = new URL(`${BASE_URL}/api/pembelian`);
+      url.searchParams.append("page", page.toString());
+      url.searchParams.append("limit", ITEMS_PER_PAGE.toString());
+      url.searchParams.append("sortBy", sortBy);
+      url.searchParams.append("order", order);
+      url.searchParams.append("tahun", tahunFilter);
 
+      if (bulanFilter) {
+        url.searchParams.append("bulan", bulanFilter);
+      }
+
+      if (searchTerm) {
+        url.searchParams.append("search", searchTerm);
+      }
+
+      console.log("📡 Fetch URL:", url.toString());
+
+      const res = await fetch(url.toString());
       const text = await res.text();
       console.log("📡 Raw API Response:", text);
       const json: ApiResponse = JSON.parse(text);
@@ -147,9 +161,14 @@ const PembelianTable: React.FC = () => {
   };
 
   // 🧭 Filter/sort
-  const handleFilterChange = (newSortBy: string, newOrder: string) => {
+  const handleFilterChange = (
+    newSortBy: string,
+    newOrder: string,
+    selectedBulan?: string
+  ) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
+    setBulanFilter(selectedBulan || "");
     setCurrentPage(1);
     fetchData(1, search);
   };
@@ -175,6 +194,7 @@ const PembelianTable: React.FC = () => {
     }
   };
 
+  // 📅 Ambil data pertama kali
   useEffect(() => {
     fetchData(currentPage, search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
