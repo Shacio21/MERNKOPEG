@@ -5,6 +5,9 @@ import {
   BiRefresh,
   BiCartAdd,
   BiReceipt,
+  BiTrendingUp,
+  BiArchive,
+  BiClipboard,
 } from "react-icons/bi";
 import "../../style/Transaksi/transaksi.css";
 
@@ -77,36 +80,42 @@ const SidebarTransaksi: React.FC = () => {
                 <h3 className="nav__subtitle">Rekap</h3>
 
                 <a
-                  href="/transaksi/pembelian"
+                  href="/rekap"
                   className={`nav__link ${
-                    activeLink === "Pembelian" ? "active" : ""
+                    activeLink === "Laba" ? "active" : ""
                   }`}
-                  onClick={() => handleLinkClick("Pembelian")}
+                  onClick={() => handleLinkClick("Laba")}
                 >
-                  <BiCartAdd className="nav__icon" />
-                  <span className="nav__name">Pembelian</span>
+                  <BiTrendingUp className="nav__icon" />
+                  <span className="nav__name">Laba</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="nav__list">
+              <div className="nav__items">
+                <h3 className="nav__subtitle">STOCK</h3>
+
+                <a
+                  href="/stok/total"
+                  className={`nav__link ${
+                    activeLink === "Total" ? "active" : ""
+                  }`}
+                  onClick={() => handleLinkClick("Total")}
+                >
+                  <BiArchive className="nav__icon" />
+                  <span className="nav__name">Stock Total</span>
                 </a>
 
                 <a
-                  href="/transaksi/penjualan"
+                  href="/stok/bulanan"
                   className={`nav__link ${
-                    activeLink === "Penjualan" ? "active" : ""
+                    activeLink === "Opname" ? "active" : ""
                   }`}
-                  onClick={() => handleLinkClick("Penjualan")}
+                  onClick={() => handleLinkClick("Opname")}
                 >
-                  <BiReceipt className="nav__icon" />
-                  <span className="nav__name">Penjualan</span>
-                </a>
-
-                <a
-                  href="/transaksi/pengembalian"
-                  className={`nav__link ${
-                    activeLink === "Pengembalian" ? "active" : ""
-                  }`}
-                  onClick={() => handleLinkClick("Pengembalian")}
-                >
-                  <BiRefresh className="nav__icon" />
-                  <span className="nav__name">Pengembalian</span>
+                  <BiClipboard className="nav__icon" />
+                  <span className="nav__name">Stock Opname</span>
                 </a>
               </div>
             </div>

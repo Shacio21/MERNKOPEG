@@ -167,6 +167,10 @@ img {
   row-gap: 2.5rem;
 }
 
+.nav__list + .nav__list {
+  margin-top: 1.5rem;
+}
+
 .nav__items {
   row-gap: 1.5rem;
 }
