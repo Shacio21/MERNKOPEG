@@ -12,7 +12,7 @@ import {
 } from "react-icons/bi";
 import "../../style/Transaksi/transaksi.css";
 
-const SidebarTransaksi: React.FC = () => {
+const SidebarPrediksi: React.FC = () => {
   const [activeLink, setActiveLink] = useState<string>("Home");
 
   const handleLinkClick = (name: string) => setActiveLink(name);
@@ -150,4 +150,4 @@ const SidebarTransaksi: React.FC = () => {
   );
 };
 
-export default SidebarTransaksi;
+export default SidebarPrediksi;

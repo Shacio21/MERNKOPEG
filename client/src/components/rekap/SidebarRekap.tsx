@@ -8,6 +8,7 @@ import {
   BiTrendingUp,
   BiArchive,
   BiClipboard,
+  BiLineChart,
 } from "react-icons/bi";
 import "../../style/Transaksi/transaksi.css";
 
@@ -116,6 +117,23 @@ const SidebarRekap: React.FC = () => {
                 >
                   <BiClipboard className="nav__icon" />
                   <span className="nav__name">Stock Opname</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="nav__list">
+              <div className="nav__items">
+                <h3 className="nav__subtitle">PREDIKSI</h3>
+
+                <a
+                  href="/prediksi"
+                  className={`nav__link ${
+                    activeLink === "Prediksi" ? "active" : ""
+                  }`}
+                  onClick={() => handleLinkClick("Prediksi")}
+                >
+                  <BiLineChart className="nav__icon" />
+                  <span className="nav__name">Prediksi</span>
                 </a>
               </div>
             </div>
