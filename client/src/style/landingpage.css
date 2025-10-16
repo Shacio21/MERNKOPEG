@@ -1,9 +1,8 @@
-/* =============== GLOBAL BACKGROUND =============== */
+/* =============== GLOBAL BACKGROUND (FIXED) =============== */
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
+  overflow-x: hidden; /* <-- INI KUNCINYA */
   background: linear-gradient(
     135deg,
     #1e392a 0%,
@@ -207,22 +206,25 @@ html, body {
 }
 
 
-/* ================= INFORMATION SECTION (SUDAH DIPERBAIKI) ================== */
-
+/* ================= INFORMATION SECTION ================== */
 .intro-section {
   position: relative;
-  width: 100%; /* biar tetap proporsional dan tidak keluar layar */
   background-color: #6d8c54;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 60px;
-  padding: 80px 40px;
+  padding: 80px 80px;
   box-sizing: border-box;
-  overflow: hidden; /* cegah isi keluar ke kanan/kiri */
+  overflow: hidden; 
   font-family: 'Livvic', sans-serif;
   color: #ffffff;
   min-height: 910px;
+
+  /* Metode full-width yang akan bekerja setelah global-fix */
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 
@@ -373,6 +375,8 @@ html, body {
 
 /* ================= ANGGOTA SECTION ================== */
 
+/* ================= ANGGOTA SECTION (IMPROVED) ================== */
+
 .fasilitas-section {
   /* Definisikan variabel warna di sini */
   --bg-section: #263c28;
@@ -382,9 +386,17 @@ html, body {
 
   background-color: var(--bg-section);
   color: var(--text-primary);
-  padding: 80px 10%;
   text-align: center;
-  box-sizing: border-box; /* Tambahan agar padding tidak merusak layout */
+  box-sizing: border-box; 
+  
+  /* === PERBAIKAN & PENYESUAIAN === */
+  position: relative;
+  padding: 80px 80px; /* 1. Padding disamakan agar sejajar dengan section lain */
+  
+  /* 2. Trik full-bleed agar latar belakang penuh selebar layar */
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .fasilitas-title {
@@ -489,14 +501,24 @@ html, body {
 
 /* ================= KEUNTUNGAN & KERUGIAN SECTION (DIPERBAIKI) ================== */
 
+/* ================= KEUNTUNGAN SECTION (FINAL) ================== */
+
 .keuntungan-section {
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
   min-height: 705px;
   background-color: #6d8c54;
   overflow: hidden;
+  box-sizing: border-box;
+  
+  /* Trik full-bleed (sudah benar) */
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
 }
+
+/* (Sisa kode Anda di bawah ini tidak perlu diubah, sudah bagus) */
 
 .bg-image {
   flex: 1;
@@ -593,14 +615,21 @@ html, body {
   }
 }
 
-/* ================= PRODUCT SLIDER (MARQUEE) ================== */
+/* ================= PRODUCT SLIDER (FINAL) ================== */
 
 .explore-section {
-  padding: 80px 0; /* Ubah padding agar slider bisa menempel ke tepi */
+  padding: 80px 0; 
   background-color: #263c28;
   color: white;
   text-align: center;
   overflow: hidden;
+
+  /* === Tambahan Pola Full-Bleed === */
+  box-sizing: border-box;
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .explore-title {
@@ -702,14 +731,20 @@ html, body {
 
 /* ================= FOOTER ================== */
 
+/* ================= FOOTER (FINAL) ================== */
+
 .footer {
   background-color: #1a1a1a;
   color: #ffffff;
   font-family: "Century Gothic", sans-serif;
   padding: 60px 100px 30px 100px;
   position: relative;
-  width: 100%;
   box-sizing: border-box;
+
+  /* Pola Full-Bleed */
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* --- Grid Layout --- */
