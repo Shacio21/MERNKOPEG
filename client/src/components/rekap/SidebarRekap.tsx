@@ -11,6 +11,8 @@ import {
   BiLineChart,
 } from "react-icons/bi";
 import "../../style/Transaksi/transaksi.css";
+import Kopeg from "../../assets/logokopeg.svg"
+import "../../style/landingpage.css";
 
 const SidebarRekap: React.FC = () => {
   const [activeLink, setActiveLink] = useState<string>("Home");
@@ -22,9 +24,12 @@ const SidebarRekap: React.FC = () => {
       {/* Header */}
       <header className="header">
         <div className="header__container">
+          <div className="navbar-left">
           <a href="/" className="header__logo">
             Koperasi Pegawai
           </a>
+          <img src={Kopeg} alt="Logo Kopeg" className="logo" />
+          </div>
         </div>
       </header>
 

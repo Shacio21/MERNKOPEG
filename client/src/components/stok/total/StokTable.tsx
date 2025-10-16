@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-// Pastikan path CSS ini sesuai dengan struktur proyek Anda
-import "../../../style/stok/stok.css"; 
+// --- BARU: Tambahkan BiRefresh dan BiLoaderAlt untuk tombol ---
+import {BiCube, BiRefresh, BiLoaderAlt } from "react-icons/bi"; 
+import "../../../style/stok/stok.css";
 
 // --- Konfigurasi ---
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const DEBOUNCE_DELAY = 300; // Jeda dalam milidetik untuk debounce search
+const DEBOUNCE_DELAY = 300; 
 
 // --- Definisi Tipe Data (Interfaces) ---
 interface StokItem {
@@ -16,7 +17,6 @@ interface StokItem {
   Total_Jumlah_Jual: number;
   Total_Jumlah_Retur: number;
 }
-
 interface ApiResponse {
   success: boolean;
   currentPage: number;
@@ -26,26 +26,12 @@ interface ApiResponse {
 }
 
 // --- Custom Hook untuk Debouncing ---
-/**
- * Menunda pembaruan nilai hingga pengguna berhenti mengetik selama periode tertentu.
- * @param value Nilai input (misal: dari search bar).
- * @param delay Jeda waktu dalam milidetik.
- * @returns Nilai yang sudah ditunda pembaruannya.
- */
 const useDebounce = (value: string, delay: number): string => {
   const [debouncedValue, setDebouncedValue] = useState(value);
-
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    // Membersihkan timeout jika 'value' atau 'delay' berubah sebelum timeout selesai
-    return () => {
-      clearTimeout(handler);
-    };
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
   }, [value, delay]);
-
   return debouncedValue;
 };
 
@@ -57,16 +43,18 @@ const StockTable: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // State untuk Pencarian dan Pengurutan
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, DEBOUNCE_DELAY);
   const [sortBy, setSortBy] = useState("Nama_Item");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
+  
+  // --- BARU: State untuk Tombol Refresh ---
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // --- Logika Pengambilan Data ---
   const fetchData = useCallback(async () => {
-    setLoading(true);
+    // Jangan set loading jika ini adalah refresh dari tombol
+    if (!isRefreshing) setLoading(true); 
     setError(null);
 
     const params = new URLSearchParams({
@@ -79,79 +67,71 @@ const StockTable: React.FC = () => {
 
     try {
       const response = await fetch(`${BASE_URL}/api/stok/total?${params.toString()}`);
-      if (!response.ok) {
-        throw new Error(`Gagal mengambil data. Status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`Gagal mengambil data. Status: ${response.status}`);
       
       const json: ApiResponse = await response.json();
-      if (!json.success) {
-        throw new Error("Respon dari API menandakan kegagalan.");
-      }
+      if (!json.success) throw new Error("Respon dari API menandakan kegagalan.");
 
       setData(json.data);
       setCurrentPage(json.currentPage);
       setTotalPages(json.totalPages);
-
-    } catch (err: unknown) { // Menggunakan 'unknown' untuk penanganan error yang lebih aman
+    } catch (err: unknown) {
       console.error("❌ Terjadi Error:", err);
-      
       let errorMessage = "Terjadi kesalahan saat memuat data.";
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      }
+      if (err instanceof Error) errorMessage = err.message;
       setError(errorMessage);
-
     } finally {
       setLoading(false);
     }
-  }, [currentPage, debouncedSearchTerm, sortBy, order]);
+  }, [currentPage, debouncedSearchTerm, sortBy, order, isRefreshing]);
+
+  // --- BARU: Logika Tombol Refresh ---
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      const response = await fetch(`${BASE_URL}/api/stok/refresh`, { method: 'POST' });
+      if (!response.ok) throw new Error('Gagal me-refresh data');
+      
+      alert('Data stok berhasil di-refresh!');
+      await fetchData(); // Muat ulang data tabel setelah refresh berhasil
+    } catch (error) {
+      console.error("Gagal refresh:", error);
+      alert('Terjadi kesalahan saat me-refresh data.');
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [fetchData]);
+
 
   // --- Side Effects (useEffect) ---
-  // Memicu pengambilan data saat parameter berubah
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // Mengembalikan ke halaman 1 setiap kali user melakukan pencarian baru
   useEffect(() => {
-    if (debouncedSearchTerm) {
-      setCurrentPage(1);
-    }
+    if (debouncedSearchTerm) setCurrentPage(1);
   }, [debouncedSearchTerm]);
 
   // --- Event Handlers ---
-  /**
-   * Mengatur kolom dan arah pengurutan data.
-   * @param field Nama properti untuk diurutkan (misal: 'Nama_Item').
-   */
   const handleSort = (field: string) => {
     const isSameField = sortBy === field;
     const newOrder = isSameField && order === "asc" ? "desc" : "asc";
-    
     setSortBy(field);
     setOrder(newOrder);
-    setCurrentPage(1); // Kembali ke halaman pertama saat urutan diubah
+    setCurrentPage(1);
   };
 
   // --- Helper untuk Render ---
-  /**
-   * Menghasilkan indikator panah untuk kolom yang aktif diurutkan.
-   * @param field Nama kolom.
-   * @returns String panah atau null.
-   */
   const getSortIndicator = (field: string) => {
-    if (sortBy === field) {
-      return order === "asc" ? " ▲" : " ▼";
-    }
+    if (sortBy === field) return order === "asc" ? " ▲" : " ▼";
     return null;
   };
   
-  // Render utama konten (tabel atau pesan status)
   const renderContent = () => {
     if (loading) return <div className="status-message">🔄 Memuat data...</div>;
     if (error) return <div className="status-message error">🚫 {error}</div>;
     if (data.length === 0) return <div className="status-message">🤷 Tidak ada data stok yang ditemukan.</div>;
-
+    
     return (
       <>
         <div className="table-wrapper">
@@ -168,10 +148,10 @@ const StockTable: React.FC = () => {
             </thead>
             <tbody>
               {data.map((item) => (
-                <tr key={item.Kode_Item}> {/* Menggunakan key yang unik */}
+                <tr key={item.Kode_Item}>
                   <td>{item.Kode_Item}</td>
                   <td>{item.Nama_Item}</td>
-                  <td>{item.Total_Stok_Akhir}</td>
+                  <td className={item.Total_Stok_Akhir < 0 ? 'stock-negative' : ''}>{item.Total_Stok_Akhir}</td>
                   <td>{item.Total_Jumlah_Beli}</td>
                   <td>{item.Total_Jumlah_Jual}</td>
                   <td>{item.Total_Jumlah_Retur}</td>
@@ -180,22 +160,13 @@ const StockTable: React.FC = () => {
             </tbody>
           </table>
         </div>
-
         {totalPages > 1 && (
           <div className="pagination">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-            >
+            <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
               ⬅️ Sebelumnya
             </button>
-            <span>
-              Halaman {currentPage} dari {totalPages}
-            </span>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
+            <span>Halaman {currentPage} dari {totalPages}</span>
+            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
               Selanjutnya ➡️
             </button>
           </div>
@@ -206,16 +177,25 @@ const StockTable: React.FC = () => {
 
   return (
     <div className="stock-container">
-      <h2 className="stock-title">📦 Tabel Total Stok Barang</h2>
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Cari nama atau kode item..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
+      <h2 className="stock-title"><BiCube /> Tabel Total Stok Barang</h2>
+      
+      {/* --- BARU: Kontainer untuk Search dan Refresh --- */}
+      <div className="controls-container">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Cari nama atau kode item..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
+        <button className="refresh-button" onClick={handleRefresh} disabled={isRefreshing || loading}>
+          {isRefreshing ? <BiLoaderAlt className="spinner" /> : <BiRefresh />}
+          <span>{isRefreshing ? "Refreshing..." : "Refresh Data"}</span>
+        </button>
       </div>
+
       {renderContent()}
     </div>
   );

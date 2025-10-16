@@ -5,7 +5,7 @@
 /*========== VARIABLES CSS ==========*/
 :root {
   --header-height: 3.5rem;
-  --nav-width: 219px;
+  --nav-width: 250px;
 
   /*========== Colors ==========*/
   --first-color: #f7c35f;
@@ -94,6 +94,7 @@ img {
   color: var(--title-color);
   font-weight: var(--font-medium);
   display: none;
+  font-size: 1.5rem;
 }
 
 .header__search {
@@ -307,12 +308,18 @@ img {
   }
 
   /* Element opacity */
-  .nav__logo-name, 
+  
   .nav__name, 
   .nav__subtitle, 
   .nav__dropdown-icon {
     opacity: 0;
     transition: .3s;
+  }
+
+  .nav__logo-name {
+    opacity: 0;
+    transition: .3s;
+    font-size: 1.5rem;
   }
   
   
