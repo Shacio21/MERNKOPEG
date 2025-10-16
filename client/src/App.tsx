@@ -5,6 +5,8 @@ import TransaksiLayout from "./components/transaksi/TransaksiLayout";
 import Pembelian from "./pages/transaksi/Pembelian";
 import Penjualan from "./pages/transaksi/Penjualan";
 import Rekap from "./pages/Rekap";
+import Laba from "./components/rekap/Laba"
+import ProdukLaris from "./components/rekap/ProdukLaris"
 import Pengembalian from "./pages/transaksi/Pengembalian";
 import Stok from "./pages/stok/StokTotal";
 import StokLayout from "./components/stok/TransaksiLayout";
@@ -30,6 +32,12 @@ function App() {
 
         {/* Stock Page */}
         <Route path="/prediksi" element={<PrediksiPage />} />
+
+        {/* Admin Pages with Layout */}
+        <Route path="/Rekap" element={<StokLayout/>}>
+          <Route path="laba" element={< Laba />} />
+          <Route path="produklaris" element={<ProdukLaris />} />
+        </Route>
 
         {/* Admin Pages with Layout */}
         <Route path="/Stok" element={<StokLayout/>}>

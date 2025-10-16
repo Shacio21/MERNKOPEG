@@ -9,6 +9,7 @@ import {
   BiArchive,
   BiClipboard,
   BiLineChart,
+  BiTrophy,
 } from "react-icons/bi";
 import "../../style/Transaksi/transaksi.css";
 import Kopeg from "../../assets/logokopeg.svg"
@@ -86,7 +87,7 @@ const SidebarTransaksi: React.FC = () => {
                 <h3 className="nav__subtitle">Rekap</h3>
 
                 <a
-                  href="/rekap"
+                  href="/rekap/laba"
                   className={`nav__link ${
                     activeLink === "Laba" ? "active" : ""
                   }`}
@@ -94,6 +95,17 @@ const SidebarTransaksi: React.FC = () => {
                 >
                   <BiTrendingUp className="nav__icon" />
                   <span className="nav__name">Laba</span>
+                </a>
+
+                <a
+                  href="/rekap/produklaris"
+                  className={`nav__link ${
+                    activeLink === "Produk" ? "active" : ""
+                  }`}
+                  onClick={() => handleLinkClick("Produk")}
+                >
+                  <BiTrophy className="nav__icon" />
+                  <span className="nav__name">Produk</span>
                 </a>
               </div>
             </div>
