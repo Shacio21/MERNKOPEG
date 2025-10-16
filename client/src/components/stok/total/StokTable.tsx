@@ -91,7 +91,6 @@ const StockTable: React.FC = () => {
     try {
       const response = await fetch(`${BASE_URL}/api/stok/refresh`, { method: 'POST' });
       if (!response.ok) throw new Error('Gagal me-refresh data');
-      
       alert('Data stok berhasil di-refresh!');
       await fetchData(); // Muat ulang data tabel setelah refresh berhasil
     } catch (error) {
