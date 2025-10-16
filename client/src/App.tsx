@@ -9,7 +9,7 @@ import Pengembalian from "./pages/transaksi/Pengembalian";
 import Stok from "./pages/stok/StokTotal";
 import StokLayout from "./components/stok/TransaksiLayout";
 import StockTable from "./components/stok/total/StokTable";
-import StockOpname from "./components/stok/bulanan/StokOpname";
+import StockOpname from "./components/stok/opname/StokOpname";
 
 function App() {
   return (
