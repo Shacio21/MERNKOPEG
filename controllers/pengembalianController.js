@@ -137,3 +137,61 @@ exports.createPengembalianCsv = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// 📄 Ambil data pengembalian berdasarkan ID
+exports.getPengembalianById = async (req, res) => {
+  try {
+    const pengembalian = await Pengembalian.findById(req.params.id);
+
+    if (!pengembalian) {
+      return res.status(404).json({ success: false, message: "Data pengembalian tidak ditemukan" });
+    }
+
+    res.status(200).json({ success: true, data: pengembalian });
+  } catch (err) {
+    console.error('❌ Error getPengembalianById:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✏️ Update data pengembalian berdasarkan ID
+exports.updatePengembalian = async (req, res) => {
+  try {
+    const pengembalian = await Pengembalian.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,          // kembalikan data terbaru setelah update
+      runValidators: true // jalankan validasi dari schema
+    });
+
+    if (!pengembalian) {
+      return res.status(404).json({ success: false, message: "Data pengembalian tidak ditemukan" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Data pengembalian berhasil diperbarui",
+      data: pengembalian
+    });
+  } catch (err) {
+    console.error('❌ Error updatePengembalian:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 🗑️ Hapus data pengembalian berdasarkan ID
+exports.deletePengembalian = async (req, res) => {
+  try {
+    const pengembalian = await Pengembalian.findByIdAndDelete(req.params.id);
+
+    if (!pengembalian) {
+      return res.status(404).json({ success: false, message: "Data pengembalian tidak ditemukan" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Data pengembalian berhasil dihapus"
+    });
+  } catch (err) {
+    console.error('❌ Error deletePengembalian:', err);
+    res.status(500).json({ error: err.message });
+  }
+};

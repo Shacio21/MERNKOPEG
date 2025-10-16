@@ -118,3 +118,60 @@ exports.createPembelianCsv = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// 📄 Ambil data pembelian berdasarkan ID
+exports.getPembelianById = async (req, res) => {
+  try {
+    const pembelian = await Pembelian.findById(req.params.id);
+
+    if (!pembelian) {
+      return res.status(404).json({ success: false, message: "Data tidak ditemukan" });
+    }
+
+    res.status(200).json({ success: true, data: pembelian });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✏️ Update data pembelian berdasarkan ID
+exports.updatePembelian = async (req, res) => {
+  try {
+    const pembelian = await Pembelian.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,      // Mengembalikan data setelah update
+      runValidators: true // Menjalankan validasi dari schema
+    });
+
+    if (!pembelian) {
+      return res.status(404).json({ success: false, message: "Data tidak ditemukan" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Data pembelian berhasil diperbarui",
+      data: pembelian
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 🗑️ Hapus data pembelian berdasarkan ID
+exports.deletePembelian = async (req, res) => {
+  try {
+    const pembelian = await Pembelian.findByIdAndDelete(req.params.id);
+
+    if (!pembelian) {
+      return res.status(404).json({ success: false, message: "Data tidak ditemukan" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Data pembelian berhasil dihapus"
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
