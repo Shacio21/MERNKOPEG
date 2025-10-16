@@ -4,6 +4,7 @@ import Pagination from "./Pagination";
 import AddPembelian from "./AddPembelian";
 import AddCsvPembelian from "./AddCsvPembelian";
 import Filter from "./Filter";
+import UpdatePembelian from "./UpdatePembelian"; // ✅ Tambahan
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -39,12 +40,16 @@ const PembelianTable: React.FC = () => {
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCsvModal, setShowCsvModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false); // ✅
+
+  // Data yang dipilih untuk diupdate
+  const [selectedData, setSelectedData] = useState<PembelianItem | null>(null);
 
   // Sorting/filter state
   const [sortBy, setSortBy] = useState("Kode_Item");
   const [order, setOrder] = useState("asc");
 
-  // ✅ Fetch data dari API dengan search + sort
+  // ✅ Fetch data
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
@@ -53,15 +58,11 @@ const PembelianTable: React.FC = () => {
       const res = await fetch(
         `${BASE_URL}/api/pembelian?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
           searchTerm
-        )}&sortBy=${sortBy}&order=${order}`,
-        {
-          headers: { Accept: "application/json" },
-        }
+        )}&sortBy=${sortBy}&order=${order}`
       );
 
       const text = await res.text();
       console.log("📡 Raw API Response:", text);
-
       const json: ApiResponse = JSON.parse(text);
 
       if (!json.success) throw new Error("Gagal mengambil data dari server");
@@ -83,7 +84,7 @@ const PembelianTable: React.FC = () => {
     fetchData(1, search);
   };
 
-  // ➕ Tambah data
+  // ➕ Tambah
   const handleAddSubmit = async (newData: any) => {
     try {
       const res = await fetch(`${BASE_URL}/api/pembelian`, {
@@ -104,13 +105,48 @@ const PembelianTable: React.FC = () => {
     }
   };
 
-  // ⬆️ CSV Upload
-  const handleCsvUploaded = () => {
-    setShowCsvModal(false);
-    fetchData(currentPage);
+  // ✏️ Update
+  const handleUpdateSubmit = async (updatedData: PembelianItem) => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/pembelian/${updatedData._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setShowUpdateModal(false);
+        setSelectedData(null);
+        fetchData(currentPage);
+      } else {
+        alert("Gagal update data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat update");
+    }
   };
 
-  // 🧭 Handle filter/sort perubahan
+  // 🗑️ Delete
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+    try {
+      const res = await fetch(`${BASE_URL}/api/pembelian/${id}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (json.success) {
+        fetchData(currentPage);
+      } else {
+        alert("Gagal menghapus data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat menghapus");
+    }
+  };
+
+  // 🧭 Filter/sort
   const handleFilterChange = (newSortBy: string, newOrder: string) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
@@ -127,7 +163,7 @@ const PembelianTable: React.FC = () => {
     <div className="pembelian-container">
       <h2 className="pembelian-title">Tabel Pembelian</h2>
 
-      {/* 🔍 Search Form */}
+      {/* 🔍 Search */}
       <form onSubmit={handleSearchSubmit} className="search-form">
         <input
           type="text"
@@ -141,12 +177,12 @@ const PembelianTable: React.FC = () => {
         </button>
       </form>
 
-      {/* 🧭 Filter/Sort Section */}
+      {/* 🧭 Filter/Sort */}
       <div className="filter-section">
         <Filter onFilterChange={handleFilterChange} />
       </div>
 
-      {/* ✅ Tombol tambah & upload CSV */}
+      {/* ✅ Tombol tambah & CSV */}
       <div className="table-header">
         <button className="add-btn" onClick={() => setShowAddModal(true)}>
           + Tambah Pembelian
@@ -156,7 +192,7 @@ const PembelianTable: React.FC = () => {
         </button>
       </div>
 
-      {/* 📊 Tabel Data */}
+      {/* 📊 Tabel */}
       {loading ? (
         <p>Loading data...</p>
       ) : error ? (
@@ -176,6 +212,7 @@ const PembelianTable: React.FC = () => {
                 <th>Total Harga</th>
                 <th>Bulan</th>
                 <th>Tahun</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -189,6 +226,23 @@ const PembelianTable: React.FC = () => {
                   <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
                   <td>{item.Bulan}</td>
                   <td>{item.Tahun}</td>
+                  <td>
+                    <button
+                      className="edit-btn"
+                      onClick={() => {
+                        setSelectedData(item);
+                        setShowUpdateModal(true);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(item._id)}
+                    >
+                      Hapus
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -204,7 +258,7 @@ const PembelianTable: React.FC = () => {
         </>
       )}
 
-      {/* Modal Tambah Pembelian */}
+      {/* Modal Tambah */}
       {showAddModal && (
         <AddPembelian
           onClose={() => setShowAddModal(false)}
@@ -212,7 +266,16 @@ const PembelianTable: React.FC = () => {
         />
       )}
 
-      {/* Modal Upload CSV */}
+      {/* Modal Update */}
+      {showUpdateModal && selectedData && (
+        <UpdatePembelian
+          data={selectedData}
+          onClose={() => setShowUpdateModal(false)}
+          onSubmit={handleUpdateSubmit}
+        />
+      )}
+
+      {/* Modal CSV */}
       {showCsvModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -222,7 +285,7 @@ const PembelianTable: React.FC = () => {
             <AddCsvPembelian />
             <button
               className="refresh-btn"
-              onClick={handleCsvUploaded}
+              onClick={() => fetchData(currentPage)}
               style={{ marginTop: "10px" }}
             >
               🔄 Refresh Data

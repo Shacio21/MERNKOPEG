@@ -1,7 +1,7 @@
 /* ============== PembelianTable ============== */
 /* Container */
 .pembelian-container {
-  max-width: 1000px;
+  max-width: 1500px;
   margin: 40px auto;
   padding: 20px;
   background: #ffffff;
@@ -451,4 +451,22 @@
 
 .filter-btn.reset-btn:hover {
   background-color: #aaa;
+}
+
+.edit-btn, .delete-btn {
+  margin-right: 2px;
+  padding: 2px 7px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background-color: #344c38;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
 }
