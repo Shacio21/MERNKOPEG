@@ -1,0 +1,65 @@
+.prediksi-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.prediksi-card {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 0.2s ease;
+}
+
+.prediksi-card:hover {
+  transform: translateY(-4px);
+}
+
+.prediksi-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prediksi-icon {
+  font-size: 1.5rem;
+}
+
+.prediksi-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.prediksi-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  color: #222;
+}
+
+.prediksi-growth {
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.growth-up {
+  color: #16a34a; /* Hijau */
+}
+
+.growth-down {
+  color: #dc2626; /* Merah */
+}
+
+.prediksi-loading,
+.prediksi-error {
+  text-align: center;
+  font-size: 1rem;
+  padding: 1rem;
+}

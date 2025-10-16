@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../style/login.css";
 
-const API_URL = "http://127.0.0.1:3001/api/auth/login";
+const API_URL = import.meta.env.VITE_BASE_URL;
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();

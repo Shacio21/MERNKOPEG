@@ -10,6 +10,7 @@ import Stok from "./pages/stok/StokTotal";
 import StokLayout from "./components/stok/TransaksiLayout";
 import StockTable from "./components/stok/total/StokTable";
 import StockOpname from "./components/stok/opname/StokOpname";
+import PrediksiPage from "./pages/PrediksiPage";
 
 function App() {
   return (
@@ -26,6 +27,10 @@ function App() {
 
         {/* Stock Page */}
         <Route path="/stok" element={<Stok />} />
+
+        {/* Stock Page */}
+        <Route path="/prediksi" element={<PrediksiPage />} />
+
         {/* Admin Pages with Layout */}
         <Route path="/Stok" element={<StokLayout/>}>
           <Route path="total" element={<StockTable />} />
