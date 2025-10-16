@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import "../../../style/Transaksi/pembelian.css";
 import Pagination from "../pembelian/Pagination";
 import AddPembelian from "../pembelian/AddPembelian";
-import AddCsvPembelian from "./AddCsvPenjualan";
+import AddCsvPenjualan from "./AddCsvPenjualan";
 import Filter from "../pembelian/Filter";
+import UpdatePenjualan from "./UpdatePenjualan"; 
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface PenjualanItem {
   _id: string;
-  Kode_Item: string;
+  Kode_Item: number; 
   Nama_Item: string;
   Jenis: string;
   Jumlah: number;
@@ -19,6 +20,7 @@ interface PenjualanItem {
   Bulan: string;
   Tahun: number;
 }
+
 
 interface ApiResponse {
   success: boolean;
@@ -39,12 +41,16 @@ const PenjualanTable: React.FC = () => {
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCsvModal, setShowCsvModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  // Sorting/filter state
+  // Data yang dipilih untuk edit
+  const [selectedData, setSelectedData] = useState<PenjualanItem | null>(null);
+
+  // Sorting/filter
   const [sortBy, setSortBy] = useState("Kode_Item");
   const [order, setOrder] = useState("asc");
 
-  // ✅ Fetch data dari API dengan search + sort
+  // ✅ Fetch data API
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
@@ -54,14 +60,11 @@ const PenjualanTable: React.FC = () => {
         `${BASE_URL}/api/penjualan?page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(
           searchTerm
         )}&sortBy=${sortBy}&order=${order}`,
-        {
-          headers: { Accept: "application/json" },
-        }
+        { headers: { Accept: "application/json" } }
       );
 
       const text = await res.text();
-      console.log("📡 Raw API Response:", text);
-
+      console.log("📡 Raw API Response (Penjualan):", text);
       const json: ApiResponse = JSON.parse(text);
 
       if (!json.success) throw new Error("Gagal mengambil data dari server");
@@ -104,18 +107,74 @@ const PenjualanTable: React.FC = () => {
     }
   };
 
-  // ⬆️ CSV Upload
-  const handleCsvUploaded = () => {
-    setShowCsvModal(false);
-    fetchData(currentPage);
+  // ✏️ Update
+  const handleUpdateSubmit = async (updatedData: PenjualanItem) => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/penjualan/${updatedData._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setShowUpdateModal(false);
+        setSelectedData(null);
+        fetchData(currentPage);
+      } else {
+        alert("Gagal update data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat update");
+    }
   };
 
-  // 🧭 Handle filter/sort perubahan
+  // 🗑️ Delete
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+    try {
+      const res = await fetch(`${BASE_URL}/api/penjualan/${id}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (json.success) {
+        fetchData(currentPage);
+      } else {
+        alert("Gagal menghapus data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat menghapus");
+    }
+  };
+
+  // 🧭 Filter/sort
   const handleFilterChange = (newSortBy: string, newOrder: string) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
     setCurrentPage(1);
     fetchData(1, search);
+  };
+
+  // 📤 Export CSV
+  const handleExportCSV = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/penjualan/export-csv`);
+      if (!res.ok) throw new Error("Gagal export CSV");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "penjualan_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat export CSV");
+    }
   };
 
   useEffect(() => {
@@ -127,7 +186,7 @@ const PenjualanTable: React.FC = () => {
     <div className="pembelian-container">
       <h2 className="pembelian-title">Tabel Penjualan</h2>
 
-      {/* 🔍 Search Form */}
+      {/* 🔍 Search */}
       <form onSubmit={handleSearchSubmit} className="search-form">
         <input
           type="text"
@@ -141,22 +200,27 @@ const PenjualanTable: React.FC = () => {
         </button>
       </form>
 
-      {/* 🧭 Filter/Sort Section */}
+      {/* 🧭 Filter */}
       <div className="filter-section">
         <Filter onFilterChange={handleFilterChange} />
       </div>
 
-      {/* ✅ Tombol tambah & upload CSV */}
+      {/* ✅ Tombol tambah, CSV, Export */}
       <div className="table-header">
         <button className="add-btn" onClick={() => setShowAddModal(true)}>
-          + Tambah Pembelian
+          + Tambah Penjualan
         </button>
-        <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
-          ⬆️ Upload CSV
-        </button>
+        <div className="csv-btn-group">
+          <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
+            Upload CSV
+          </button>
+          <button className="export-btn" onClick={handleExportCSV}>
+            Export CSV
+          </button>
+        </div>
       </div>
 
-      {/* 📊 Tabel Data */}
+      {/* 📊 Tabel */}
       {loading ? (
         <p>Loading data...</p>
       ) : error ? (
@@ -176,12 +240,13 @@ const PenjualanTable: React.FC = () => {
                 <th>Total Harga</th>
                 <th>Bulan</th>
                 <th>Tahun</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
               {data.map((item) => (
                 <tr key={item._id}>
-                  <td>{item.Kode_Item || "-"}</td>
+                  <td>{item.Kode_Item}</td>
                   <td>{item.Nama_Item}</td>
                   <td>{item.Jenis}</td>
                   <td>{item.Jumlah}</td>
@@ -189,6 +254,23 @@ const PenjualanTable: React.FC = () => {
                   <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
                   <td>{item.Bulan}</td>
                   <td>{item.Tahun}</td>
+                  <td className="action-cell">
+                    <button
+                      className="action-btn edit-btn"
+                      onClick={() => {
+                        setSelectedData(item);
+                        setShowUpdateModal(true);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="action-btn delete-btn"
+                      onClick={() => handleDelete(item._id)}
+                    >
+                      Hapus
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -204,7 +286,7 @@ const PenjualanTable: React.FC = () => {
         </>
       )}
 
-      {/* Modal Tambah Pembelian */}
+      {/* Modal Tambah */}
       {showAddModal && (
         <AddPembelian
           onClose={() => setShowAddModal(false)}
@@ -212,17 +294,26 @@ const PenjualanTable: React.FC = () => {
         />
       )}
 
-      {/* Modal Upload CSV */}
+      {/* Modal Update */}
+      {showUpdateModal && selectedData && (
+        <UpdatePenjualan
+          data={selectedData}
+          onClose={() => setShowUpdateModal(false)}
+          onSubmit={handleUpdateSubmit}
+        />
+      )}
+
+      {/* Modal CSV */}
       {showCsvModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <button className="close-btn" onClick={() => setShowCsvModal(false)}>
               ✖
             </button>
-            <AddCsvPembelian />
+            <AddCsvPenjualan />
             <button
               className="refresh-btn"
-              onClick={handleCsvUploaded}
+              onClick={() => fetchData(currentPage)}
               style={{ marginTop: "10px" }}
             >
               🔄 Refresh Data

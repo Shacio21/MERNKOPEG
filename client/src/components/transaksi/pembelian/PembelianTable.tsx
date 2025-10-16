@@ -40,7 +40,7 @@ const PembelianTable: React.FC = () => {
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCsvModal, setShowCsvModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false); // ✅
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   // Data yang dipilih untuk diupdate
   const [selectedData, setSelectedData] = useState<PembelianItem | null>(null);
@@ -154,6 +154,27 @@ const PembelianTable: React.FC = () => {
     fetchData(1, search);
   };
 
+  // 📤 Export CSV
+  const handleExportCSV = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/pembelian/export-csv`);
+      if (!res.ok) throw new Error("Gagal export CSV");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pembelian_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat export CSV");
+    }
+  };
+
   useEffect(() => {
     fetchData(currentPage, search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,14 +203,19 @@ const PembelianTable: React.FC = () => {
         <Filter onFilterChange={handleFilterChange} />
       </div>
 
-      {/* ✅ Tombol tambah & CSV */}
+      {/* ✅ Tombol tambah, CSV, Export */}
       <div className="table-header">
         <button className="add-btn" onClick={() => setShowAddModal(true)}>
           + Tambah Pembelian
         </button>
-        <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
-          ⬆️ Upload CSV
-        </button>
+        <div className="csv-btn-group">
+          <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
+            Upload CSV
+          </button>
+          <button className="export-btn" onClick={handleExportCSV}>
+            Export CSV
+          </button>
+        </div>
       </div>
 
       {/* 📊 Tabel */}
@@ -226,9 +252,9 @@ const PembelianTable: React.FC = () => {
                   <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
                   <td>{item.Bulan}</td>
                   <td>{item.Tahun}</td>
-                  <td>
+                  <td className="action-cell">
                     <button
-                      className="edit-btn"
+                      className="action-btn edit-btn"
                       onClick={() => {
                         setSelectedData(item);
                         setShowUpdateModal(true);
@@ -237,7 +263,7 @@ const PembelianTable: React.FC = () => {
                       Edit
                     </button>
                     <button
-                      className="delete-btn"
+                      className="action-btn delete-btn"
                       onClick={() => handleDelete(item._id)}
                     >
                       Hapus

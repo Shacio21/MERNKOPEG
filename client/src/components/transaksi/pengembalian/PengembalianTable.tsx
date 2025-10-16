@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../../style/Transaksi/pembelian.css";
 import Pagination from "../pembelian/Pagination";
 import AddPengembalian from "./AddPengembalian";
+import UpdatePengembalian from "./UpdatePengembalian";
 import AddCsvPengembalian from "./AddCsvPengembalian";
 import Filter from "../pembelian/Filter";
 
@@ -41,12 +42,18 @@ const PengembalianTable: React.FC = () => {
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCsvModal, setShowCsvModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  // Sorting/filter state
+  // Data yang dipilih untuk edit
+  const [selectedData, setSelectedData] = useState<PengembalianItem | null>(
+    null
+  );
+
+  // Sorting/filter
   const [sortBy, setSortBy] = useState("Kode_Item");
   const [order, setOrder] = useState("asc");
 
-  // ✅ Fetch data dari API
+  // ✅ Fetch data API
   const fetchData = async (page: number, searchTerm: string = "") => {
     setLoading(true);
     setError(null);
@@ -60,9 +67,9 @@ const PengembalianTable: React.FC = () => {
       );
 
       const text = await res.text();
-      console.log(res);
-
+      console.log("📡 Raw API Response (Pengembalian):", text);
       const json: ApiResponse = JSON.parse(text);
+
       if (!json.success) throw new Error("Gagal mengambil data dari server");
 
       setData(json.data);
@@ -103,18 +110,77 @@ const PengembalianTable: React.FC = () => {
     }
   };
 
-  // ⬆️ CSV Upload
-  const handleCsvUploaded = () => {
-    setShowCsvModal(false);
-    fetchData(currentPage);
+  // ✏️ Update data
+  const handleUpdateSubmit = async (updatedData: PengembalianItem) => {
+    try {
+      const res = await fetch(
+        `${BASE_URL}/api/pengembalian/${updatedData._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedData),
+        }
+      );
+      const json = await res.json();
+      if (json.success) {
+        setShowUpdateModal(false);
+        setSelectedData(null);
+        fetchData(currentPage);
+      } else {
+        alert("Gagal update data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat update");
+    }
   };
 
-  // 🧭 Filter/Sort perubahan
+  // 🗑️ Delete data
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+    try {
+      const res = await fetch(`${BASE_URL}/api/pengembalian/${id}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (json.success) {
+        fetchData(currentPage);
+      } else {
+        alert("Gagal menghapus data");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat menghapus");
+    }
+  };
+
+  // 🧭 Filter/sort
   const handleFilterChange = (newSortBy: string, newOrder: string) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
     setCurrentPage(1);
     fetchData(1, search);
+  };
+
+  // 📤 Export CSV
+  const handleExportCSV = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/pengembalian/export-csv`);
+      if (!res.ok) throw new Error("Gagal export CSV");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pengembalian_export.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat export CSV");
+    }
   };
 
   useEffect(() => {
@@ -126,7 +192,7 @@ const PengembalianTable: React.FC = () => {
     <div className="pembelian-container">
       <h2 className="pembelian-title">Tabel Pengembalian</h2>
 
-      {/* 🔍 Search Form */}
+      {/* 🔍 Search */}
       <form onSubmit={handleSearchSubmit} className="search-form">
         <input
           type="text"
@@ -140,22 +206,27 @@ const PengembalianTable: React.FC = () => {
         </button>
       </form>
 
-      {/* 🧭 Filter/Sort Section */}
+      {/* 🧭 Filter */}
       <div className="filter-section">
         <Filter onFilterChange={handleFilterChange} />
       </div>
 
-      {/* ✅ Tombol tambah & upload CSV */}
+      {/* ✅ Tombol tambah, CSV, Export */}
       <div className="table-header">
         <button className="add-btn" onClick={() => setShowAddModal(true)}>
           + Tambah Pengembalian
         </button>
-        <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
-          ⬆️ Upload CSV
-        </button>
+        <div className="csv-btn-group">
+          <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
+            Upload CSV
+          </button>
+          <button className="export-btn" onClick={handleExportCSV}>
+            Export CSV
+          </button>
+        </div>
       </div>
 
-      {/* 📊 Tabel Data */}
+      {/* 📊 Tabel */}
       {loading ? (
         <p>Loading data...</p>
       ) : error ? (
@@ -177,6 +248,7 @@ const PengembalianTable: React.FC = () => {
                 <th>Total Harga (Rp)</th>
                 <th>Bulan</th>
                 <th>Tahun</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -192,6 +264,23 @@ const PengembalianTable: React.FC = () => {
                   <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
                   <td>{item.Bulan}</td>
                   <td>{item.Tahun}</td>
+                  <td className="action-cell">
+                    <button
+                      className="action-btn edit-btn"
+                      onClick={() => {
+                        setSelectedData(item);
+                        setShowUpdateModal(true);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="action-btn delete-btn"
+                      onClick={() => handleDelete(item._id)}
+                    >
+                      Hapus
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -207,7 +296,7 @@ const PengembalianTable: React.FC = () => {
         </>
       )}
 
-      {/* Modal Tambah Pengembalian */}
+      {/* Modal Tambah */}
       {showAddModal && (
         <AddPengembalian
           onClose={() => setShowAddModal(false)}
@@ -215,18 +304,26 @@ const PengembalianTable: React.FC = () => {
         />
       )}
 
-      {/* Modal Upload CSV */}
+      {/* Modal Update */}
+      {showUpdateModal && selectedData && (
+        <UpdatePengembalian
+          data={selectedData}
+          onClose={() => setShowUpdateModal(false)}
+          onSubmit={handleUpdateSubmit}
+        />
+      )}
+
+      {/* Modal CSV */}
       {showCsvModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <button className="close-btn" onClick={() => setShowCsvModal(false)}>
               ✖
             </button>
-            {/* 🔽 URL CSV upload dibuat fleksibel */}
             <AddCsvPengembalian />
             <button
               className="refresh-btn"
-              onClick={handleCsvUploaded}
+              onClick={() => fetchData(currentPage)}
               style={{ marginTop: "10px" }}
             >
               🔄 Refresh Data

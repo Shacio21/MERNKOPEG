@@ -1,7 +1,7 @@
 /* ============== PembelianTable ============== */
 /* Container */
 .pembelian-container {
-  max-width: 1500px;
+  max-width: 1300px;
   margin: 40px auto;
   padding: 20px;
   background: #ffffff;
@@ -37,7 +37,7 @@
 }
 
 .pembelian-table tr:hover {
-  background-color: #93cea6;
+  background-color: #ccdcd1;
   transition: 0.3s;
 }
 
@@ -50,7 +50,6 @@
 }
 
 /* ============== Pagination ============== */
-
 .pagination-container {
   display: flex;
   justify-content: center;
@@ -453,20 +452,72 @@
   background-color: #aaa;
 }
 
-.edit-btn, .delete-btn {
-  margin-right: 2px;
-  padding: 2px 7px;
+/* Kolom tombol agar lebih rapih */
+.action-cell {
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Tombol umum */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: auto;
+  min-width: 60px;
+}
+
+/* Tombol Edit */
+.edit-btn {
+  background-color: #344c38;
+  color: #ffffff;
+}
+
+.edit-btn:hover {
+  background-color: #47614a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Tombol Hapus */
+.delete-btn {
+  background-color: #e53935;
+  color: #ffffff;
+}
+
+.delete-btn:hover {
+  background-color: #c62828;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Tambahan jarak antar tombol */
+.action-btn:not(:last-child) {
+  margin-right: 6px;
+}
+
+.csv-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.export-btn {
+  background-color: #3b82f6;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.edit-btn {
-  background-color: #344c38;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #f44336;
-  color: white;
+.export-btn:hover {
+  background-color: #2563eb;
 }
