@@ -170,6 +170,17 @@ const PenjualanTable: React.FC = () => {
     fetchData(1, search);
   };
 
+  //Ceklis
+// ✅ State untuk baris yang dipilih
+const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+// ✅ Fungsi toggle baris
+const toggleSelectRow = (id: string) => {
+  setSelectedRows((prev) =>
+    prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+  );
+};
+ 
   // 📤 Export CSV
   const handleExportCSV = async () => {
     try {
@@ -247,6 +258,7 @@ const PenjualanTable: React.FC = () => {
           <table className="pembelian-table">
             <thead>
               <tr>
+                <th></th> {/* ✅ kolom checkbox */}
                 <th>Kode Item</th>
                 <th>Nama Item</th>
                 <th>Jenis</th>
@@ -259,37 +271,54 @@ const PenjualanTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.Kode_Item}</td>
-                  <td>{item.Nama_Item}</td>
-                  <td>{item.Jenis}</td>
-                  <td>{item.Jumlah}</td>
-                  <td>{item.Satuan}</td>
-                  <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
-                  <td>{item.Bulan}</td>
-                  <td>{item.Tahun}</td>
-                  <td className="action-cell">
-                    <button
-                      className="action-btn edit-btn"
-                      onClick={() => {
-                        setSelectedData(item);
-                        setShowUpdateModal(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {data.map((item) => {
+                const isSelected = selectedRows.includes(item._id);
+                return (
+                  <tr
+                    key={item._id}
+                    style={{
+                      backgroundColor: isSelected ? "#d4fcd4" : "transparent",
+                      transition: "background-color 0.3s ease",
+                    }}
+                  >
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelectRow(item._id)}
+                      />
+                    </td>
+                    <td>{item.Kode_Item}</td>
+                    <td>{item.Nama_Item}</td>
+                    <td>{item.Jenis}</td>
+                    <td>{item.Jumlah}</td>
+                    <td>{item.Satuan}</td>
+                    <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
+                    <td>{item.Bulan}</td>
+                    <td>{item.Tahun}</td>
+                    <td className="action-cell">
+                      <button
+                        className="action-btn edit-btn"
+                        onClick={() => {
+                          setSelectedData(item);
+                          setShowUpdateModal(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="action-btn delete-btn"
+                        onClick={() => handleDelete(item._id)}
+                      >
+                        Hapus
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+
 
           {totalPages > 1 && (
             <Pagination
@@ -322,10 +351,7 @@ const PenjualanTable: React.FC = () => {
       {showCsvModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <button className="close-btn" onClick={() => setShowCsvModal(false)}>
-              ✖
-            </button>
-            <AddCsvPenjualan />
+            <AddCsvPenjualan onClose={() => setShowCsvModal(false)} /> {/* ✅ ini */}
             <button
               className="refresh-btn"
               onClick={() => fetchData(currentPage)}

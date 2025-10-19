@@ -3,7 +3,11 @@ import "../../../style/Transaksi/pembelian.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const AddCsvPembelian: React.FC = () => {
+interface AddCsvPembelianProps {
+  onClose?: () => void; // ← opsional agar tidak error
+}
+
+const AddCsvPembelian: React.FC<AddCsvPembelianProps> = ({ onClose }) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -33,7 +37,7 @@ const AddCsvPembelian: React.FC = () => {
       setError(null);
       setMessage(null);
 
-      const res = await fetch(`${BASE_URL}/api/penjualan/upload-csv`, {
+      const res = await fetch(`${BASE_URL}/api/pembelian/upload-csv`, {
         method: "POST",
         body: formData,
       });
@@ -69,9 +73,22 @@ const AddCsvPembelian: React.FC = () => {
           onChange={handleFileChange}
           className="csv-input"
         />
-        <button type="submit" className="csv-btn" disabled={uploading}>
-          {uploading ? "Mengupload..." : "Upload"}
-        </button>
+
+        <div className="csv-btn-group">
+          <button type="submit" className="csv-btn" disabled={uploading}>
+            {uploading ? "Mengupload..." : "Upload"}
+          </button>
+
+          {/* 🔴 Tombol Batal */}
+          <button
+            type="button"
+            className="csv-btn-cancel"
+            onClick={() => onClose?.()} // aman walau tidak dikirim
+            disabled={uploading}
+          >
+            Batal
+          </button>
+        </div>
       </form>
 
       {message && <p className="csv-message success">{message}</p>}

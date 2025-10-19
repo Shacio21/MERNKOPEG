@@ -23,7 +23,6 @@ const HeroSection: React.FC = () => {
             Website Rekap Data Penjualan dari mini market Koperasi Pegawai Polman Manufaktur Bandung
           </p>
 
-          <button className="hero-button">Discover More</button>
         </div>
       </div>
     </section>

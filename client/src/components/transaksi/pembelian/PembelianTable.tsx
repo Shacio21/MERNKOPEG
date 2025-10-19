@@ -29,6 +29,7 @@ interface ApiResponse {
   data: PembelianItem[];
 }
 
+
 const PembelianTable: React.FC = () => {
   const [data, setData] = useState<PembelianItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -194,6 +195,21 @@ const PembelianTable: React.FC = () => {
     }
   };
 
+
+  //ceklis tabel 
+  // ✅ Tambah state di atas
+const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+// ✅ Fungsi toggle checkbox
+const toggleSelectRow = (id: string) => {
+  setSelectedRows((prev) =>
+    prev.includes(id)
+      ? prev.filter((itemId) => itemId !== id) // jika sudah ada → hapus
+      : [...prev, id] // jika belum → tambahkan
+  );
+};
+
+
   // 📅 Ambil data pertama kali
   useEffect(() => {
     fetchData(currentPage, search);
@@ -250,6 +266,7 @@ const PembelianTable: React.FC = () => {
           <table className="pembelian-table">
             <thead>
               <tr>
+                <th></th> {/* ✅ Kolom checkbox */}
                 <th>Kode Item</th>
                 <th>Nama Item</th>
                 <th>Jenis</th>
@@ -262,37 +279,54 @@ const PembelianTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.Kode_Item}</td>
-                  <td>{item.Nama_Item}</td>
-                  <td>{item.Jenis}</td>
-                  <td>{item.Jumlah}</td>
-                  <td>{item.Satuan}</td>
-                  <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
-                  <td>{item.Bulan}</td>
-                  <td>{item.Tahun}</td>
-                  <td className="action-cell">
-                    <button
-                      className="action-btn edit-btn"
-                      onClick={() => {
-                        setSelectedData(item);
-                        setShowUpdateModal(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {data.map((item) => {
+                const isSelected = selectedRows.includes(item._id);
+                return (
+                  <tr
+                    key={item._id}
+                    style={{
+                      backgroundColor: isSelected ? "#d4fcd4" : "transparent", // ✅ hijau muda
+                      transition: "background-color 0.3s ease",
+                    }}
+                  >
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelectRow(item._id)}
+                      />
+                    </td>
+                    <td>{item.Kode_Item}</td>
+                    <td>{item.Nama_Item}</td>
+                    <td>{item.Jenis}</td>
+                    <td>{item.Jumlah}</td>
+                    <td>{item.Satuan}</td>
+                    <td>Rp {item.Total_Harga.toLocaleString("id-ID")}</td>
+                    <td>{item.Bulan}</td>
+                    <td>{item.Tahun}</td>
+                    <td className="action-cell">
+                      <button
+                        className="action-btn edit-btn"
+                        onClick={() => {
+                          setSelectedData(item);
+                          setShowUpdateModal(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="action-btn delete-btn"
+                        onClick={() => handleDelete(item._id)}
+                      >
+                        Hapus
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+
 
           {totalPages > 1 && (
             <Pagination
@@ -325,10 +359,7 @@ const PembelianTable: React.FC = () => {
       {showCsvModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <button className="close-btn" onClick={() => setShowCsvModal(false)}>
-              ✖
-            </button>
-            <AddCsvPembelian />
+            <AddCsvPembelian onClose={() => setShowCsvModal(false)} /> {/* ✅ ini */}
             <button
               className="refresh-btn"
               onClick={() => fetchData(currentPage)}

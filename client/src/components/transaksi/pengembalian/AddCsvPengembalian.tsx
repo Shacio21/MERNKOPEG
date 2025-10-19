@@ -3,7 +3,11 @@ import "../../../style/Transaksi/pembelian.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const AddCsvPengembalian: React.FC = () => {
+interface AddCsvPengembalianProps {
+  onClose: () => void; // 🟢 Tambah prop untuk tombol Batal
+}
+
+const AddCsvPengembalian: React.FC<AddCsvPengembalianProps> = ({ onClose }) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -59,7 +63,7 @@ const AddCsvPengembalian: React.FC = () => {
 
   return (
     <div className="csv-container">
-      <h2 className="csv-title">Upload CSV Pembelian</h2>
+      <h2 className="csv-title">Upload CSV Pengembalian</h2>
 
       <form onSubmit={handleUpload} className="csv-form">
         <input
@@ -69,9 +73,22 @@ const AddCsvPengembalian: React.FC = () => {
           onChange={handleFileChange}
           className="csv-input"
         />
-        <button type="submit" className="csv-btn" disabled={uploading}>
-          {uploading ? "Mengupload..." : "Upload"}
-        </button>
+
+        <div className="csv-btn-group">
+          <button type="submit" className="csv-btn" disabled={uploading}>
+            {uploading ? "Mengupload..." : "Upload"}
+          </button>
+
+          {/* 🟢 Tombol batal */}
+          <button
+            type="button"
+            className="csv-btn-cancel"
+            onClick={onClose}
+            disabled={uploading}
+          >
+            Batal
+          </button>
+        </div>
       </form>
 
       {message && <p className="csv-message success">{message}</p>}
@@ -80,16 +97,16 @@ const AddCsvPengembalian: React.FC = () => {
       <div className="csv-info">
         <p>📌 Pastikan format CSV sesuai dengan kolom database:</p>
         <ul>
-            <li>No</li>
-            <li>Kode Item</li>
-            <li>Nama Item</li>
-            <li>Jumlah</li>
-            <li>Satuan</li>
-            <li>Harga (Rp)</li>
-            <li>Pot. %</li>
-            <li>Total Harga (Rp)</li>
-            <li>Bulan</li>
-            <li>Tahun</li>
+          <li>No</li>
+          <li>Kode Item</li>
+          <li>Nama Item</li>
+          <li>Jumlah</li>
+          <li>Satuan</li>
+          <li>Harga (Rp)</li>
+          <li>Pot. %</li>
+          <li>Total Harga (Rp)</li>
+          <li>Bulan</li>
+          <li>Tahun</li>
         </ul>
       </div>
     </div>

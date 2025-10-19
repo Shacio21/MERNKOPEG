@@ -369,16 +369,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.close-btn {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  border: none;
-  background: none;
-  font-size: 20px;
-  cursor: pointer;
-}
-
 .csv-btn {
   margin-left: 10px;
   background-color: #007bff;
@@ -520,4 +510,37 @@
 
 .export-btn:hover {
   background-color: #2563eb;
+}
+
+
+.csv-btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.csv-btn-cancel {
+  background-color: #e63946;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.csv-btn-cancel:hover {
+  background-color: #c92a35;
+}
+
+
+.pembelian-table tr:hover {
+  background-color: #f3f3f3;
+  transition: background-color 0.3s ease;
+}
+
+.pembelian-table tr input[type="checkbox"] {
+  cursor: pointer;
+  transform: scale(1.2);
 }
