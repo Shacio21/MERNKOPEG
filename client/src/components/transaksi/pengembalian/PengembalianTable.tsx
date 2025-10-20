@@ -257,47 +257,65 @@ const toggleSelectRow = (id: string) => {
         <p>Tidak ada data.</p>
       ) : (
         <>
-        <table className="pembelian-table">
-          <thead>
-            <tr>
-              <th></th> {/* ✅ Kolom checkbox */}
-              <th>No</th>
-              <th>Kode Item</th>
-              <th>Nama Item</th>
-              <th>Jumlah</th>
-              <th>Satuan</th>
-              <th>Harga (Rp)</th>
-              <th>Pot. %</th>
-              <th>Total Harga (Rp)</th>
-              <th>Bulan</th>
-              <th>Tahun</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item) => {
-              const isSelected = selectedRows.includes(item._id);
-              return (
-                <tr
-                  key={item._id}
-                  style={{
-                    backgroundColor: isSelected ? "#d4fcd4" : "transparent",
-                    transition: "background-color 0.3s ease",
-                  }}
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleSelectRow(item._id)}
-                    />
-                  </td>
-                  {/* kolom data lain tetap sama */}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+          <table className="pembelian-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>No</th>
+                <th>Kode Item</th>
+                <th>Nama Item</th>
+                <th>Jumlah</th>
+                <th>Satuan</th>
+                <th>Harga (Rp)</th>
+                <th>Pot. %</th>
+                <th>Total Harga (Rp)</th>
+                <th>Bulan</th>
+                <th>Tahun</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item) => {
+                const isSelected = selectedRows.includes(item._id);
+                return (
+                  <tr
+                    key={item._id}
+                    style={{
+                      backgroundColor: isSelected ? "#d4fcd4" : "transparent",
+                      transition: "background-color 0.3s ease",
+                    }}
+                  >
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelectRow(item._id)}
+                      />
+                    </td>
+                    <td>{item.No}</td>
+                    <td>{item.Kode_Item}</td>
+                    <td>{item.Nama_Item}</td>
+                    <td>{item.Jml}</td>
+                    <td>{item.Satuan}</td>
+                    <td>{item.Harga.toLocaleString()}</td>
+                    <td>{item["Pot. %"]}</td>
+                    <td>{item.Total_Harga.toLocaleString()}</td>
+                    <td>{item.Bulan}</td>
+                    <td>{item.Tahun}</td>
+                    <td>
+                      <button onClick={() => {
+                        setSelectedData(item);
+                        setShowUpdateModal(true);
+                      }}>
+                        ✏️ Edit
+                      </button>
+                      <button onClick={() => handleDelete(item._id)}>🗑️ Hapus</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
 
 
           {totalPages > 1 && (

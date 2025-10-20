@@ -37,7 +37,7 @@ const AddCsvPengembalian: React.FC<AddCsvPengembalianProps> = ({ onClose }) => {
       setError(null);
       setMessage(null);
 
-      const res = await fetch(`${BASE_URL}/api/pembelian/upload-csv`, {
+      const res = await fetch(`${BASE_URL}/api/pengembalian/upload-csv`, {
         method: "POST",
         body: formData,
       });
