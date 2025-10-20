@@ -2,6 +2,7 @@ const Penjualan = require('../models/penjualan');
 const fs = require('fs');
 const csv = require('csvtojson');
 const { savePenjualanFromCsv } = require('../services/penjualanService');
+const { Parser } = require('json2csv');
 
 // ➕ Input data penjualan baru
 exports.createPenjualan = async (req, res) => {
@@ -20,10 +21,12 @@ exports.getPenjualan = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-
     const search = req.query.search || "";
+    const bulan = req.query.bulan;
+    const tahun = req.query.tahun; 
     let query = {};
 
+    // 🔍 Filter berdasarkan pencarian (search)
     if (search) {
       const isNumber = !isNaN(search);
 
@@ -33,7 +36,7 @@ exports.getPenjualan = async (req, res) => {
               { Jumlah: Number(search) },
               { Total_Harga: Number(search) },
               { Tahun: Number(search) },
-              { Kode_Item: search } // tetap string
+              { Kode_Item: search },
             ],
           }
         : {
@@ -47,6 +50,15 @@ exports.getPenjualan = async (req, res) => {
           };
     }
 
+    // 🗓️ Filter tambahan: bulan & tahun
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") }; // agar tidak case sensitive
+    }
+
+    if (tahun) {
+      query.Tahun = Number(tahun); // pastikan numerik
+    }
+
     const sortField = req.query.sortBy || "Tahun";
     const sortOrder = req.query.order === "desc" ? -1 : 1;
 
@@ -58,7 +70,6 @@ exports.getPenjualan = async (req, res) => {
 
     const totalData = await Penjualan.countDocuments(query);
 
-    // 🧩 Pipeline baru dengan aman untuk angka besar
     const pipeline = [
       { $match: query },
       {
@@ -70,7 +81,7 @@ exports.getPenjualan = async (req, res) => {
               then: {
                 $convert: {
                   input: "$Kode_Item",
-                  to: "decimal",     // ✅ ubah ke decimal agar tidak overflow
+                  to: "decimal",
                   onError: 0,
                   onNull: 0
                 }
@@ -111,6 +122,7 @@ exports.getPenjualan = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // 📦 Import CSV
 exports.createPenjualanCsv = async (req, res) => {
@@ -190,5 +202,77 @@ exports.deletePenjualan = async (req, res) => {
   } catch (err) {
     console.error('❌ Error deletePenjualan:', err);
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.exportPenjualanToCsv = async (req, res) => {
+  try {
+    const search = req.query.search || "";
+    const bulan = req.query.bulan; 
+    const tahun = req.query.tahun;
+    let query = {};
+
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") }; // agar tidak case sensitive
+    }
+
+    if (tahun) {
+      query.Tahun = Number(tahun); // pastikan numerik
+    }
+
+    if (search) {
+      const isNumber = !isNaN(search);
+
+      query = isNumber
+        ? {
+            $or: [
+              { Kode_Item: Number(search) },
+              { Jumlah: Number(search) },
+              { Total_Harga: Number(search) },
+              { Tahun: Number(search) },
+            ],
+          }
+        : {
+            $or: [
+              { Nama_Item: { $regex: search, $options: "i" } },
+              { Jenis: { $regex: search, $options: "i" } },
+              { Satuan: { $regex: search, $options: "i" } },
+              { Bulan: { $regex: search, $options: "i" } },
+            ],
+          };
+    }
+
+    const penjualan = await Penjualan.find(query).lean(); 
+
+    if (!penjualan || penjualan.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Tidak ada data penjualan untuk diexport" 
+      });
+    }
+
+    const fields = [
+      "Kode_Item",
+      "Nama_Item",
+      "Jenis",
+      "Jumlah",
+      "Satuan",
+      "Total_Harga",
+      "Bulan",
+      "Tahun"
+    ];
+
+    const opts = { fields };
+    const parser = new Parser(opts);
+    const csv = parser.parse(penjualan);
+
+    // 🔽 Siapkan response agar langsung jadi file CSV yang bisa di-download
+    res.header("Content-Type", "text/csv");
+    const namaFile = `penjualan_export_${bulan || "SEMUA"}_${tahun || "ALL"}_${Date.now()}.csv`;
+    res.attachment(namaFile);
+    return res.send(csv);
+  } catch (err) {
+    console.error("❌ Error exportPenjualanToCsv:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 };

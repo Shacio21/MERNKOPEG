@@ -7,28 +7,26 @@ const {
   createPenjualanCsv,
   getPenjualanById,
   updatePenjualan,
-  deletePenjualan
+  deletePenjualan,
+  exportPenjualanToCsv
 } = require('../controllers/penjualanController');
+const { route } = require('./pengembalianRoutes');
 
 // 🗂️ Setup multer
 const upload = multer({ dest: 'uploads/' });
 
-// ➕ Tambah data penjualan
 router.post('/', createPenjualan);
 
-// 📋 Ambil semua data penjualan
 router.get('/', getPenjualan);
 
-// 📄 Ambil satu data berdasarkan ID
+router.post('/upload-csv', upload.single('file'), createPenjualanCsv);
+
+router.get('/export-csv', exportPenjualanToCsv);
+
 router.get('/:id', getPenjualanById);
 
-// ✏️ Update data penjualan berdasarkan ID
 router.put('/:id', updatePenjualan);
 
-// 🗑️ Hapus data penjualan berdasarkan ID
 router.delete('/:id', deletePenjualan);
-
-// 📤 Upload CSV
-router.post('/upload-csv', upload.single('file'), createPenjualanCsv);
 
 module.exports = router;

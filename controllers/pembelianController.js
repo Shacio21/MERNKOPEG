@@ -2,6 +2,7 @@ const Pembelian = require("../models/pembelian");
 const csv = require("csvtojson");
 const fs = require("fs");
 const { savePembelianFromCsv } = require('../services/pembelianService');
+const { Parser } = require("json2csv");
 
 exports.createPembelian = async (req, res) => {
   try {
@@ -18,6 +19,8 @@ exports.getPembelian = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+    const bulan = req.query.bulan;
+    const tahun = req.query.tahun; 
 
     // 🔍 Search global: cek apakah search adalah angka atau teks
     const search = req.query.search || "";
@@ -43,6 +46,14 @@ exports.getPembelian = async (req, res) => {
               { Bulan: { $regex: search, $options: "i" } },
             ],
           };
+    }
+    
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") }; // agar tidak case sensitive
+    }
+
+    if (tahun) {
+      query.Tahun = Number(tahun); // pastikan numerik
     }
 
     // 🧩 Sort dinamis
@@ -171,6 +182,80 @@ exports.deletePembelian = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+// 📤 Export data pembelian ke CSV dan langsung download
+
+exports.exportPembelianToCsv = async (req, res) => {
+  try {
+    const search = req.query.search || "";
+    const bulan = req.query.bulan; 
+    const tahun = req.query.tahun;
+    let query = {};
+
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") }; // agar tidak case sensitive
+    }
+
+    if (tahun) {
+      query.Tahun = Number(tahun); // pastikan numerik
+    }
+
+    if (search) {
+      const isNumber = !isNaN(search);
+
+      query = isNumber
+        ? {
+            $or: [
+              { Kode_Item: Number(search) },
+              { Jumlah: Number(search) },
+              { Total_Harga: Number(search) },
+              { Tahun: Number(search) },
+            ],
+          }
+        : {
+            $or: [
+              { Nama_Item: { $regex: search, $options: "i" } },
+              { Jenis: { $regex: search, $options: "i" } },
+              { Satuan: { $regex: search, $options: "i" } },
+              { Bulan: { $regex: search, $options: "i" } },
+            ],
+          };
+    }
+
+    const pembelian = await Pembelian.find(query).lean();
+
+    if (!pembelian || pembelian.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Tidak ada data pembelian untuk diexport",
+      });
+    }
+
+    const fields = [
+      "Kode_Item",
+      "Nama_Item",
+      "Jenis",
+      "Jumlah",
+      "Satuan",
+      "Total_Harga",
+      "Bulan",
+      "Tahun",
+    ];
+
+    const opts = { fields };
+    const parser = new Parser(opts);
+    const csv = parser.parse(pembelian);
+
+    // Header untuk download file
+    res.header("Content-Type", "text/csv");
+    const namaFile = `pembelian_export_${bulan || "SEMUA"}_${tahun || "ALL"}_${Date.now()}.csv`;
+    res.attachment(namaFile);
+    res.send(csv);
+  } catch (err) {
+    console.error("❌ Error exportPembelianToCsv:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 

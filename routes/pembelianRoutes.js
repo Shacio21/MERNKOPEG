@@ -7,7 +7,8 @@ const {
   createPembelianCsv,
   updatePembelian,
   getPembelianById,
-  deletePembelian
+  deletePembelian,
+  exportPembelianToCsv
 } = require('../controllers/pembelianController');
 
 // 🗂️ Setup multer (folder sementara untuk upload file)
@@ -19,6 +20,10 @@ router.post('/', createPembelian);
 // 📋 Ambil semua data pembelian (dengan pagination, search, sort)
 router.get('/', getPembelian);
 
+router.post('/upload-csv', upload.single('file'), createPembelianCsv);
+
+router.get('/export-csv', exportPembelianToCsv);
+
 // 📄 Ambil 1 data pembelian berdasarkan ID
 router.get('/:id', getPembelianById);
 
@@ -27,8 +32,5 @@ router.put('/:id', updatePembelian);
 
 // 🗑️ Hapus data pembelian berdasarkan ID
 router.delete('/:id', deletePembelian);
-
-// 📤 Upload file CSV dan simpan ke database
-router.post('/upload-csv', upload.single('file'), createPembelianCsv);
 
 module.exports = router;

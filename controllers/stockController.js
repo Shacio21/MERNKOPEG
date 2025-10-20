@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Stock = require("../models/stock");
 const fs = require("fs");
 const csv = require("csvtojson");
+const { Parser } = require("json2csv");
 
 exports.refreshStock = async (req, res) => {
   try {
@@ -105,20 +106,19 @@ exports.refreshStock = async (req, res) => {
 };
 
 
-// 🟢 GET Semua stok
 exports.getStock = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // 🔍 Search global: cek apakah search angka atau teks
     const search = req.query.search || "";
+    const bulan = req.query.bulan;
+    const tahun = req.query.tahun;
     let query = {};
 
     if (search) {
       const isNumber = !isNaN(search);
-
       query = isNumber
         ? {
             $or: [
@@ -139,7 +139,13 @@ exports.getStock = async (req, res) => {
           };
     }
 
-    // 🧩 Sort dinamis
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") };
+    }
+    if (tahun) {
+      query.Tahun = Number(tahun);
+    }
+
     const sortField = req.query.sortBy || "Tahun";
     const sortOrder = req.query.order === "desc" ? -1 : 1;
 
@@ -149,7 +155,10 @@ exports.getStock = async (req, res) => {
       "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
     ];
 
-    const totalData = await Stock.countDocuments(query);
+    // ✅ Hitung total data pakai pipeline agar konsisten
+    const totalPipeline = [{ $match: query }, { $count: "total" }];
+    const totalResult = await Stock.aggregate(totalPipeline);
+    const totalData = totalResult[0]?.total || 0;
 
     const pipeline = [
       { $match: query },
@@ -161,19 +170,14 @@ exports.getStock = async (req, res) => {
     ];
 
     const sortObj = {};
-    if (sortField === "Bulan") {
-      sortObj["bulanIndex"] = sortOrder;
-    } else {
-      sortObj[sortField] = sortOrder;
-    }
+    if (sortField === "Bulan") sortObj["bulanIndex"] = sortOrder;
+    else sortObj[sortField] = sortOrder;
 
-    pipeline.push({ $sort: sortObj });
-    pipeline.push({ $skip: skip });
-    pipeline.push({ $limit: limit });
+    pipeline.push({ $sort: sortObj }, { $skip: skip }, { $limit: limit });
 
     const stocks = await Stock.aggregate(pipeline);
 
-    res.json({
+    res.status(200).json({
       success: true,
       currentPage: page,
       totalPages: Math.ceil(totalData / limit),
@@ -183,8 +187,8 @@ exports.getStock = async (req, res) => {
       data: stocks,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error getStock:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -273,22 +277,22 @@ exports.getTotalStockPerItem = async (req, res) => {
 
 exports.stockOpname = async (req, res) => {
   try {
-    // ✅ Pastikan ada file CSV yang diupload
     if (!req.file) {
       return res.status(400).json({ message: "File CSV tidak ditemukan." });
     }
 
-    // 🔄 Baca CSV → ubah jadi array JSON
-    const csvData = await csv().fromFile(req.file.path);
+    const csvDataRaw = await csv().fromFile(req.file.path);
+    const dbDataRaw = await Stock.find().lean();
 
-    // 🧠 Ambil semua data stok dari DB
-    const dbData = await Stock.find().lean();
+    // 🧹 Hilangkan duplikat di CSV dan DB berdasarkan (Kode_Item, Bulan, Tahun)
+    const key = (d) => `${d.Kode_Item}-${d.Bulan?.toUpperCase()}-${d.Tahun}`;
+
+    const csvData = Array.from(new Map(csvDataRaw.map((d) => [key(d), d])).values());
+    const dbData = Array.from(new Map(dbDataRaw.map((d) => [key(d), d])).values());
 
     const perbedaan = [];
 
-    // 🔍 Looping data CSV dan bandingkan
     csvData.forEach((csvItem) => {
-      // Temukan data DB yang memiliki Kode_Item, Bulan, dan Tahun yang sama
       const dbItem = dbData.find(
         (d) =>
           Number(d.Kode_Item) === Number(csvItem.Kode_Item) &&
@@ -297,7 +301,6 @@ exports.stockOpname = async (req, res) => {
       );
 
       if (dbItem) {
-        // Bandingkan field penting
         const fields = ["Jumlah_Beli", "Jumlah_Jual", "Jumlah_Retur", "Stok_Akhir"];
         const berbeda = fields.some(
           (f) => Number(dbItem[f]) !== Number(csvItem[f])
@@ -324,7 +327,6 @@ exports.stockOpname = async (req, res) => {
           });
         }
       } else {
-        // Data tidak ditemukan di DB dengan kombinasi Kode_Item + Bulan + Tahun yang sama
         perbedaan.push({
           Kode_Item: csvItem.Kode_Item,
           Nama_Item: csvItem.Nama_Item,
@@ -335,12 +337,10 @@ exports.stockOpname = async (req, res) => {
       }
     });
 
-    // 🧹 Hapus file CSV setelah selesai (opsional)
     fs.unlink(req.file.path, (err) => {
       if (err) console.warn("Gagal hapus file upload:", err);
     });
 
-    // 📤 Respon hasil
     if (perbedaan.length > 0) {
       return res.status(200).json({
         message: "Ditemukan perbedaan data stok berdasarkan Kode_Item, Bulan, dan Tahun",
@@ -354,4 +354,85 @@ exports.stockOpname = async (req, res) => {
     return res.status(500).json({ message: "Terjadi kesalahan server." });
   }
 };
+
+
+exports.exportStockCsv = async (req, res) => {
+  await this.refreshStock(req, { json: () => {}, status: () => ({ json: () => {} }) });
+  try {
+    const search = req.query.search || "";
+    const bulan = req.query.bulan ? req.query.bulan.toUpperCase() : null;
+    const tahun = req.query.tahun ? Number(req.query.tahun) : null;
+    let query = {};
+
+    // 🔎 Filter Bulan & Tahun
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") }; // case-insensitive
+    }
+    if (tahun) {
+      query.Tahun = Number(tahun);
+    }
+
+    // 🔍 Filter pencarian global
+    if (search) {
+      const isNumber = !isNaN(search);
+      query = isNumber
+        ? {
+            $or: [
+              { Kode_Item: Number(search) },
+              { Jumlah_Beli: Number(search) },
+              { Jumlah_Jual: Number(search) },
+              { Jumlah_Retur: Number(search) },
+              { Stok_Akhir: Number(search) },
+              { Tahun: Number(search) },
+            ],
+          }
+        : {
+            $or: [
+              { Nama_Item: { $regex: search, $options: "i" } },
+              { Bulan: { $regex: search, $options: "i" } },
+              { Keterangan: { $regex: search, $options: "i" } },
+            ],
+          };
+    }
+
+    // 🧠 Ambil data stok
+    const stok = await Stock.find(query).lean();
+
+    if (!stok || stok.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Tidak ada data stok untuk diexport",
+      });
+    }
+
+    // Kolom yang akan diexport
+    const fields = [
+      "Kode_Item",
+      "Nama_Item",
+      "Bulan",
+      "Tahun",
+      "Jumlah_Beli",
+      "Jumlah_Jual",
+      "Jumlah_Retur",
+      "Stok_Akhir",
+      "Keterangan",
+    ];
+
+    // Convert JSON → CSV
+    const opts = { fields };
+    const parser = new Parser(opts);
+    const csv = parser.parse(stok);
+
+    // Header untuk auto-download
+    res.header("Content-Type", "text/csv");
+    const namaFile = `stok_export_${bulan || "SEMUA"}_${tahun || "ALL"}_${Date.now()}.csv`;
+    res.attachment(namaFile);
+    res.send(csv);
+  } catch (err) {
+    console.error("❌ Error exportStockCsv:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+
 

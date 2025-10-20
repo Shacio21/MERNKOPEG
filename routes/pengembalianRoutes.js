@@ -7,7 +7,8 @@ const {
   createPengembalianCsv,
   getPengembalianById,
   updatePengembalian,
-  deletePengembalian
+  deletePengembalian,
+  exportPengembalianCsv
 } = require('../controllers/pengembalianController');
 
 // 🗂️ Setup multer
@@ -18,6 +19,9 @@ router.post('/', createPengembalian);
 
 // 📋 Ambil semua data pengembalian
 router.get('/', getPengembalian);
+
+// 📤 Export data ke CSV
+router.get('/export-csv', exportPengembalianCsv);
 
 // 📄 Ambil 1 data berdasarkan ID
 router.get('/:id', getPengembalianById);

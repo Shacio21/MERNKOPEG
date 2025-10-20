@@ -1,6 +1,7 @@
 const Pengembalian = require('../models/pengembalian');
 const csv = require('csvtojson');
 const fs = require('fs');
+const { Parser } = require("json2csv");
 const { savePengembalianFromCsv } = require('../services/pengembalianService');
 
 exports.createPengembalian = async (req, res) => {
@@ -18,7 +19,8 @@ exports.getPengembalian = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-
+    const bulan = req.query.bulan;
+    const tahun = req.query.tahun; 
     const search = req.query.search || "";
     let query = {};
 
@@ -45,6 +47,14 @@ exports.getPengembalian = async (req, res) => {
               { Bulan: { $regex: search, $options: "i" } },
             ],
           };
+    }
+
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") }; // agar tidak case sensitive
+    }
+
+    if (tahun) {
+      query.Tahun = Number(tahun); // pastikan numerik
     }
 
     // 🧩 Sorting dinamis
@@ -192,6 +202,80 @@ exports.deletePengembalian = async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Error deletePengembalian:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.exportPengembalianCsv = async (req, res) => {
+  try {
+    const bulan = req.query.bulan;
+    const tahun = req.query.tahun; 
+    const search = req.query.search || "";
+    let query = {};
+
+    // 🔍 Jika ada pencarian
+    if (search) {
+      const isNumber = !isNaN(search);
+
+      query = isNumber
+        ? {
+            $or: [
+              { Jml: Number(search) },
+              { Harga: Number(search) },
+              { Potongan: Number(search) },
+              { Total_Harga: Number(search) },
+              { Tahun: Number(search) },
+              { Kode_Item: search }
+            ],
+          }
+        : {
+            $or: [
+              { Kode_Item: { $regex: search, $options: "i" } },
+              { Nama_Item: { $regex: search, $options: "i" } },
+              { Satuan: { $regex: search, $options: "i" } },
+              { Bulan: { $regex: search, $options: "i" } },
+            ],
+          };
+    }
+
+    if (bulan) {
+      query.Bulan = { $regex: new RegExp(`^${bulan}$`, "i") }; // agar tidak case sensitive
+    }
+
+    if (tahun) {
+      query.Tahun = Number(tahun); // pastikan numerik
+    }
+
+    const pengembalian = await Pengembalian.find(query).lean();
+
+    if (pengembalian.length === 0) {
+      return res.status(404).json({ success: false, message: "Tidak ada data untuk diexport" });
+    }
+
+    // Tentukan kolom yang akan diexport
+    const fields = [
+      "Kode_Item",
+      "Nama_Item",
+      "Satuan",
+      "Jml",
+      "Harga",
+      "Potongan",
+      "Total_Harga",
+      "Bulan",
+      "Tahun"
+    ];
+
+    const opts = { fields };
+    const parser = new Parser(opts);
+    const csv = parser.parse(pengembalian);
+
+    res.header("Content-Type", "text/csv");
+    const namaFile = `pengembalian_export_${bulan || "SEMUA"}_${tahun || "ALL"}_${Date.now()}.csv`;
+    res.attachment(namaFile);
+    res.send(csv);
+
+  } catch (err) {
+    console.error('❌ Error exportPengembalianCsv:', err);
     res.status(500).json({ error: err.message });
   }
 };
