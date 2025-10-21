@@ -207,3 +207,40 @@ body {
     padding: 20px;
   }
 }
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.export-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.export-button:hover {
+  background-color: #0056b3;
+}
+
+.export-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

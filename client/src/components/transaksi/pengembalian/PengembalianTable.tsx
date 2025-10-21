@@ -303,13 +303,14 @@ const toggleSelectRow = (id: string) => {
                     <td>{item.Bulan}</td>
                     <td>{item.Tahun}</td>
                     <td>
-                      <button onClick={() => {
+                      <button 
+                         className="action-btn edit-btn" onClick={() => {
                         setSelectedData(item);
                         setShowUpdateModal(true);
                       }}>
-                        ✏️ Edit
+                        Edit
                       </button>
-                      <button onClick={() => handleDelete(item._id)}>🗑️ Hapus</button>
+                      <button className="action-btn delete-btn"  onClick={() => handleDelete(item._id)}>Hapus</button>
                     </td>
                   </tr>
                 );

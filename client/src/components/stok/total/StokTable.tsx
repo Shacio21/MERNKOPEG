@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-// --- BARU: Tambahkan BiRefresh dan BiLoaderAlt untuk tombol ---
-import {BiCube, BiRefresh, BiLoaderAlt } from "react-icons/bi"; 
+import { BiCube, BiRefresh, BiLoaderAlt, BiDownload } from "react-icons/bi";
 import "../../../style/stok/stok.css";
 
-// --- Konfigurasi ---
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const DEBOUNCE_DELAY = 300; 
+const DEBOUNCE_DELAY = 300;
 
-// --- Definisi Tipe Data (Interfaces) ---
+// --- Interfaces ---
 interface StokItem {
   Kode_Item: number;
   Nama_Item: string;
@@ -25,7 +23,7 @@ interface ApiResponse {
   data: StokItem[];
 }
 
-// --- Custom Hook untuk Debouncing ---
+// --- Debounce Hook ---
 const useDebounce = (value: string, delay: number): string => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -35,9 +33,7 @@ const useDebounce = (value: string, delay: number): string => {
   return debouncedValue;
 };
 
-// --- Komponen Utama ---
 const StockTable: React.FC = () => {
-  // --- State Management ---
   const [data, setData] = useState<StokItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -47,28 +43,31 @@ const StockTable: React.FC = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, DEBOUNCE_DELAY);
   const [sortBy, setSortBy] = useState("Nama_Item");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
-  
-  // --- BARU: State untuk Tombol Refresh ---
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false); // 🆕 export state
 
-  // --- Logika Pengambilan Data ---
+  // --- Filter Bulan & Tahun ---
+  const [bulan, setBulan] = useState("januari");
+  const [tahun, setTahun] = useState("2025");
+
   const fetchData = useCallback(async () => {
-    // Jangan set loading jika ini adalah refresh dari tombol
-    if (!isRefreshing) setLoading(true); 
+    if (!isRefreshing) setLoading(true);
     setError(null);
 
     const params = new URLSearchParams({
       page: String(currentPage),
       limit: String(ITEMS_PER_PAGE),
       search: debouncedSearchTerm,
-      sortBy: sortBy,
-      order: order,
+      sortBy,
+      order,
+      bulan,
+      tahun,
     });
 
     try {
-      const response = await fetch(`${BASE_URL}/api/stok/total?${params.toString()}`);
+      const response = await fetch(`${BASE_URL}/api/stok?${params.toString()}`);
       if (!response.ok) throw new Error(`Gagal mengambil data. Status: ${response.status}`);
-      
+
       const json: ApiResponse = await response.json();
       if (!json.success) throw new Error("Respon dari API menandakan kegagalan.");
 
@@ -83,26 +82,50 @@ const StockTable: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, debouncedSearchTerm, sortBy, order, isRefreshing]);
+  }, [currentPage, debouncedSearchTerm, sortBy, order, bulan, tahun, isRefreshing]);
 
-  // --- BARU: Logika Tombol Refresh ---
+  // --- Tombol Refresh ---
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const response = await fetch(`${BASE_URL}/api/stok/refresh`, { method: 'POST' });
-      if (!response.ok) throw new Error('Gagal me-refresh data');
-      alert('Data stok berhasil di-refresh!');
-      await fetchData(); // Muat ulang data tabel setelah refresh berhasil
+      const response = await fetch(`${BASE_URL}/api/stok/refresh`, { method: "POST" });
+      if (!response.ok) throw new Error("Gagal me-refresh data");
+      alert("Data stok berhasil di-refresh!");
+      await fetchData();
     } catch (error) {
       console.error("Gagal refresh:", error);
-      alert('Terjadi kesalahan saat me-refresh data.');
+      alert("Terjadi kesalahan saat me-refresh data.");
     } finally {
       setIsRefreshing(false);
     }
   }, [fetchData]);
 
+  // --- 🆕 Tombol Export CSV ---
+  const handleExportCSV = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams({ bulan, tahun });
+      const response = await fetch(`${BASE_URL}/api/stok/export-csv?${params.toString()}`);
 
-  // --- Side Effects (useEffect) ---
+      if (!response.ok) throw new Error("Gagal mengekspor CSV.");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `stok_${bulan}_${tahun}.csv`;
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Gagal export CSV:", error);
+      alert("Terjadi kesalahan saat mengekspor data ke CSV.");
+    } finally {
+      setIsExporting(false);
+    }
+  }, [bulan, tahun]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -111,7 +134,6 @@ const StockTable: React.FC = () => {
     if (debouncedSearchTerm) setCurrentPage(1);
   }, [debouncedSearchTerm]);
 
-  // --- Event Handlers ---
   const handleSort = (field: string) => {
     const isSameField = sortBy === field;
     const newOrder = isSameField && order === "asc" ? "desc" : "asc";
@@ -120,29 +142,40 @@ const StockTable: React.FC = () => {
     setCurrentPage(1);
   };
 
-  // --- Helper untuk Render ---
   const getSortIndicator = (field: string) => {
     if (sortBy === field) return order === "asc" ? " ▲" : " ▼";
     return null;
   };
-  
+
   const renderContent = () => {
     if (loading) return <div className="status-message">🔄 Memuat data...</div>;
     if (error) return <div className="status-message error">🚫 {error}</div>;
     if (data.length === 0) return <div className="status-message">🤷 Tidak ada data stok yang ditemukan.</div>;
-    
+
     return (
       <>
         <div className="table-wrapper">
           <table className="stock-table">
             <thead>
               <tr>
-                <th onClick={() => handleSort("Kode_Item")}>Kode Item<span className="sort-indicator">{getSortIndicator("Kode_Item")}</span></th>
-                <th onClick={() => handleSort("Nama_Item")}>Nama Item<span className="sort-indicator">{getSortIndicator("Nama_Item")}</span></th>
-                <th onClick={() => handleSort("Total_Stok_Akhir")}>Stok Akhir<span className="sort-indicator">{getSortIndicator("Total_Stok_Akhir")}</span></th>
-                <th onClick={() => handleSort("Total_Jumlah_Beli")}>Total Beli<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Beli")}</span></th>
-                <th onClick={() => handleSort("Total_Jumlah_Jual")}>Total Jual<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Jual")}</span></th>
-                <th onClick={() => handleSort("Total_Jumlah_Retur")}>Total Retur<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Retur")}</span></th>
+                <th onClick={() => handleSort("Kode_Item")}>
+                  Kode Item<span className="sort-indicator">{getSortIndicator("Kode_Item")}</span>
+                </th>
+                <th onClick={() => handleSort("Nama_Item")}>
+                  Nama Item<span className="sort-indicator">{getSortIndicator("Nama_Item")}</span>
+                </th>
+                <th onClick={() => handleSort("Total_Stok_Akhir")}>
+                  Stok Akhir<span className="sort-indicator">{getSortIndicator("Total_Stok_Akhir")}</span>
+                </th>
+                <th onClick={() => handleSort("Total_Jumlah_Beli")}>
+                  Total Beli<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Beli")}</span>
+                </th>
+                <th onClick={() => handleSort("Total_Jumlah_Jual")}>
+                  Total Jual<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Jual")}</span>
+                </th>
+                <th onClick={() => handleSort("Total_Jumlah_Retur")}>
+                  Total Retur<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Retur")}</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -150,7 +183,7 @@ const StockTable: React.FC = () => {
                 <tr key={item.Kode_Item}>
                   <td>{item.Kode_Item}</td>
                   <td>{item.Nama_Item}</td>
-                  <td className={item.Total_Stok_Akhir < 0 ? 'stock-negative' : ''}>{item.Total_Stok_Akhir}</td>
+                  <td className={item.Total_Stok_Akhir < 0 ? "stock-negative" : ""}>{item.Total_Stok_Akhir}</td>
                   <td>{item.Total_Jumlah_Beli}</td>
                   <td>{item.Total_Jumlah_Jual}</td>
                   <td>{item.Total_Jumlah_Retur}</td>
@@ -159,6 +192,7 @@ const StockTable: React.FC = () => {
             </tbody>
           </table>
         </div>
+
         {totalPages > 1 && (
           <div className="pagination">
             <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
@@ -174,12 +208,32 @@ const StockTable: React.FC = () => {
     );
   };
 
+  const bulanList = [
+    "januari", "februari", "maret", "april", "mei", "juni",
+    "juli", "agustus", "september", "oktober", "november", "desember"
+  ];
+  const tahunList = ["2023", "2024", "2025", "2026"];
+
   return (
     <div className="stock-container">
       <h2 className="stock-title"><BiCube /> Tabel Total Stok Barang</h2>
-      
-      {/* --- BARU: Kontainer untuk Search dan Refresh --- */}
+
+      {/* Filter + Search + Buttons */}
       <div className="controls-container">
+        <div className="filters">
+          <select value={bulan} onChange={(e) => setBulan(e.target.value)} className="filter-select">
+            {bulanList.map((b) => (
+              <option key={b} value={b}>{b.charAt(0).toUpperCase() + b.slice(1)}</option>
+            ))}
+          </select>
+
+          <select value={tahun} onChange={(e) => setTahun(e.target.value)} className="filter-select">
+            {tahunList.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="search-container">
           <input
             type="text"
@@ -189,10 +243,19 @@ const StockTable: React.FC = () => {
             className="search-input"
           />
         </div>
-        <button className="refresh-button" onClick={handleRefresh} disabled={isRefreshing || loading}>
-          {isRefreshing ? <BiLoaderAlt className="spinner" /> : <BiRefresh />}
-          <span>{isRefreshing ? "Refreshing..." : "Refresh Data"}</span>
-        </button>
+
+        <div className="button-group">
+          <button className="refresh-button" onClick={handleRefresh} disabled={isRefreshing || loading}>
+            {isRefreshing ? <BiLoaderAlt className="spinner" /> : <BiRefresh />}
+            <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+          </button>
+
+          {/* 🆕 Tombol Export CSV */}
+          <button className="export-button" onClick={handleExportCSV} disabled={isExporting}>
+            {isExporting ? <BiLoaderAlt className="spinner" /> : <BiDownload />}
+            <span>{isExporting ? "Exporting..." : "Export CSV"}</span>
+          </button>
+        </div>
       </div>
 
       {renderContent()}
