@@ -165,35 +165,55 @@ const PembelianTable: React.FC = () => {
   const handleFilterChange = (
     newSortBy: string,
     newOrder: string,
-    selectedBulan?: string
+    selectedBulan?: string,
+    selectedTahun?: string
   ) => {
     setSortBy(newSortBy);
     setOrder(newOrder);
     setBulanFilter(selectedBulan || "");
+    setTahunFilter(selectedTahun || "");
     setCurrentPage(1);
     fetchData(1, search);
   };
 
-  // 📤 Export CSV
-  const handleExportCSV = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/pembelian/export-csv`);
-      if (!res.ok) throw new Error("Gagal export CSV");
+// 📤 Export CSV dengan filter bulan & tahun
+const handleExportCSV = async () => {
+  try {
+    let query = "";
 
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "pembelian_export.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-      alert("Terjadi kesalahan saat export CSV");
+    if (bulanFilter && tahunFilter) {
+      query = `?bulan=${bulanFilter}&tahun=${tahunFilter}`;
+    } else if (tahunFilter) {
+      query = `?tahun=${tahunFilter}`;
     }
-  };
+
+    const res = await fetch(`${BASE_URL}/api/pembelian/export-csv${query}`);
+    if (!res.ok) throw new Error("Gagal export CSV");
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+
+    // Nama file dinamis berdasarkan filter
+    const fileName =
+      bulanFilter && tahunFilter
+        ? `pembelian_${bulanFilter}_${tahunFilter}.csv`
+        : tahunFilter
+        ? `pembelian_${tahunFilter}.csv`
+        : "pembelian_export.csv";
+
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error(err);
+    alert("Terjadi kesalahan saat export CSV");
+  }
+};
+
 
 
   //ceklis tabel 
@@ -240,19 +260,48 @@ const toggleSelectRow = (id: string) => {
       </div>
 
       {/* ✅ Tombol tambah, CSV, Export */}
-      <div className="table-header">
-        <button className="add-btn" onClick={() => setShowAddModal(true)}>
-          + Tambah Pembelian
-        </button>
-        <div className="csv-btn-group">
-          <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
-            Upload CSV
-          </button>
-          <button className="export-btn" onClick={handleExportCSV}>
-            Export CSV
-          </button>
-        </div>
-      </div>
+<div className="csv-btn-group">
+  <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
+    Upload CSV
+  </button>
+
+  {/* 🔽 Pilihan bulan & tahun sebelum export */}
+    <select
+      value={bulanFilter}
+      onChange={(e) => setBulanFilter(e.target.value)}
+      className="filter-select"
+    >
+      <option value="">Semua Bulan</option>
+      <option value="Januari">Januari</option>
+      <option value="Februari">Februari</option>
+      <option value="Maret">Maret</option>
+      <option value="April">April</option>
+      <option value="Mei">Mei</option>
+      <option value="Juni">Juni</option>
+      <option value="Juli">Juli</option>
+      <option value="Agustus">Agustus</option>
+      <option value="September">September</option>
+      <option value="Oktober">Oktober</option>
+      <option value="November">November</option>
+      <option value="Desember">Desember</option>
+    </select>
+
+    <select
+      value={tahunFilter}
+      onChange={(e) => setTahunFilter(e.target.value)}
+      className="filter-select"
+    >
+      <option value="">Semua Tahun</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+    </select>
+
+    <button className="export-btn" onClick={handleExportCSV}>
+      Export CSV
+    </button>
+  </div>
+
 
       {/* 📊 Tabel */}
       {loading ? (

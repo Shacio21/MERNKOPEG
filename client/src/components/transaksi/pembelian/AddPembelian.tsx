@@ -32,7 +32,7 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
   return (
     <div className="addpembelian-overlay">
       <div className="addpembelian-container">
-        <h2>Tambah Data Pembelian</h2>
+        <h2>Tambah Data Penjualan</h2>
         <form onSubmit={handleSubmit} className="addpembelian-form">
           <div className="form-grid">
             <div className="form-group">

@@ -6,7 +6,6 @@ const ITEMS_PER_PAGE = 10;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const DEBOUNCE_DELAY = 300;
 
-// --- Interfaces ---
 interface StokItem {
   Kode_Item: number;
   Nama_Item: string;
@@ -23,7 +22,6 @@ interface ApiResponse {
   data: StokItem[];
 }
 
-// --- Debounce Hook ---
 const useDebounce = (value: string, delay: number): string => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -44,11 +42,11 @@ const StockTable: React.FC = () => {
   const [sortBy, setSortBy] = useState("Nama_Item");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isExporting, setIsExporting] = useState(false); // 🆕 export state
+  const [isExporting, setIsExporting] = useState(false);
 
-  // --- Filter Bulan & Tahun ---
-  const [bulan, setBulan] = useState("januari");
-  const [tahun, setTahun] = useState("2025");
+  // Tambahkan opsi "all"
+  const [bulan, setBulan] = useState("all");
+  const [tahun, setTahun] = useState("all");
 
   const fetchData = useCallback(async () => {
     if (!isRefreshing) setLoading(true);
@@ -60,9 +58,11 @@ const StockTable: React.FC = () => {
       search: debouncedSearchTerm,
       sortBy,
       order,
-      bulan,
-      tahun,
     });
+
+    // hanya tambahkan bulan/tahun jika bukan "all"
+    if (bulan !== "all") params.append("bulan", bulan);
+    if (tahun !== "all") params.append("tahun", tahun);
 
     try {
       const response = await fetch(`${BASE_URL}/api/stok?${params.toString()}`);
@@ -84,7 +84,6 @@ const StockTable: React.FC = () => {
     }
   }, [currentPage, debouncedSearchTerm, sortBy, order, bulan, tahun, isRefreshing]);
 
-  // --- Tombol Refresh ---
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -100,11 +99,13 @@ const StockTable: React.FC = () => {
     }
   }, [fetchData]);
 
-  // --- 🆕 Tombol Export CSV ---
   const handleExportCSV = useCallback(async () => {
     setIsExporting(true);
     try {
-      const params = new URLSearchParams({ bulan, tahun });
+      const params = new URLSearchParams();
+      if (bulan !== "all") params.append("bulan", bulan);
+      if (tahun !== "all") params.append("tahun", tahun);
+
       const response = await fetch(`${BASE_URL}/api/stok/export-csv?${params.toString()}`);
 
       if (!response.ok) throw new Error("Gagal mengekspor CSV.");
@@ -114,7 +115,7 @@ const StockTable: React.FC = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `stok_${bulan}_${tahun}.csv`;
+      link.download = `stok_${bulan === "all" ? "semua" : bulan}_${tahun === "all" ? "semua" : tahun}.csv`;
       link.click();
 
       window.URL.revokeObjectURL(url);
@@ -147,89 +148,45 @@ const StockTable: React.FC = () => {
     return null;
   };
 
-  const renderContent = () => {
-    if (loading) return <div className="status-message">🔄 Memuat data...</div>;
-    if (error) return <div className="status-message error">🚫 {error}</div>;
-    if (data.length === 0) return <div className="status-message">🤷 Tidak ada data stok yang ditemukan.</div>;
-
-    return (
-      <>
-        <div className="table-wrapper">
-          <table className="stock-table">
-            <thead>
-              <tr>
-                <th onClick={() => handleSort("Kode_Item")}>
-                  Kode Item<span className="sort-indicator">{getSortIndicator("Kode_Item")}</span>
-                </th>
-                <th onClick={() => handleSort("Nama_Item")}>
-                  Nama Item<span className="sort-indicator">{getSortIndicator("Nama_Item")}</span>
-                </th>
-                <th onClick={() => handleSort("Total_Stok_Akhir")}>
-                  Stok Akhir<span className="sort-indicator">{getSortIndicator("Total_Stok_Akhir")}</span>
-                </th>
-                <th onClick={() => handleSort("Total_Jumlah_Beli")}>
-                  Total Beli<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Beli")}</span>
-                </th>
-                <th onClick={() => handleSort("Total_Jumlah_Jual")}>
-                  Total Jual<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Jual")}</span>
-                </th>
-                <th onClick={() => handleSort("Total_Jumlah_Retur")}>
-                  Total Retur<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Retur")}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr key={item.Kode_Item}>
-                  <td>{item.Kode_Item}</td>
-                  <td>{item.Nama_Item}</td>
-                  <td className={item.Total_Stok_Akhir < 0 ? "stock-negative" : ""}>{item.Total_Stok_Akhir}</td>
-                  <td>{item.Total_Jumlah_Beli}</td>
-                  <td>{item.Total_Jumlah_Jual}</td>
-                  <td>{item.Total_Jumlah_Retur}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {totalPages > 1 && (
-          <div className="pagination">
-            <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
-              ⬅️ Sebelumnya
-            </button>
-            <span>Halaman {currentPage} dari {totalPages}</span>
-            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
-              Selanjutnya ➡️
-            </button>
-          </div>
-        )}
-      </>
-    );
-  };
-
   const bulanList = [
-    "januari", "februari", "maret", "april", "mei", "juni",
-    "juli", "agustus", "september", "oktober", "november", "desember"
+    { value: "all", label: "Semua Bulan" },
+    { value: "januari", label: "Januari" },
+    { value: "februari", label: "Februari" },
+    { value: "maret", label: "Maret" },
+    { value: "april", label: "April" },
+    { value: "mei", label: "Mei" },
+    { value: "juni", label: "Juni" },
+    { value: "juli", label: "Juli" },
+    { value: "agustus", label: "Agustus" },
+    { value: "september", label: "September" },
+    { value: "oktober", label: "Oktober" },
+    { value: "november", label: "November" },
+    { value: "desember", label: "Desember" },
   ];
-  const tahunList = ["2023", "2024", "2025", "2026"];
+
+  const tahunList = [
+    { value: "all", label: "Semua Tahun" },
+    { value: "2023", label: "2023" },
+    { value: "2024", label: "2024" },
+    { value: "2025", label: "2025" },
+    { value: "2026", label: "2026" },
+  ];
 
   return (
     <div className="stock-container">
       <h2 className="stock-title"><BiCube /> Tabel Total Stok Barang</h2>
 
-      {/* Filter + Search + Buttons */}
       <div className="controls-container">
         <div className="filters">
           <select value={bulan} onChange={(e) => setBulan(e.target.value)} className="filter-select">
             {bulanList.map((b) => (
-              <option key={b} value={b}>{b.charAt(0).toUpperCase() + b.slice(1)}</option>
+              <option key={b.value} value={b.value}>{b.label}</option>
             ))}
           </select>
 
           <select value={tahun} onChange={(e) => setTahun(e.target.value)} className="filter-select">
             {tahunList.map((t) => (
-              <option key={t} value={t}>{t}</option>
+              <option key={t.value} value={t.value}>{t.label}</option>
             ))}
           </select>
         </div>
@@ -250,7 +207,6 @@ const StockTable: React.FC = () => {
             <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
           </button>
 
-          {/* 🆕 Tombol Export CSV */}
           <button className="export-button" onClick={handleExportCSV} disabled={isExporting}>
             {isExporting ? <BiLoaderAlt className="spinner" /> : <BiDownload />}
             <span>{isExporting ? "Exporting..." : "Export CSV"}</span>
@@ -258,7 +214,70 @@ const StockTable: React.FC = () => {
         </div>
       </div>
 
-      {renderContent()}
+      {loading ? (
+        <div className="status-message">🔄 Memuat data...</div>
+      ) : error ? (
+        <div className="status-message error">🚫 {error}</div>
+      ) : data.length === 0 ? (
+        <div className="status-message">🤷 Tidak ada data stok yang ditemukan.</div>
+      ) : (
+        <>
+          <div className="table-wrapper">
+            <table className="stock-table">
+              <thead>
+                <tr>
+                  <th onClick={() => handleSort("Kode_Item")}>
+                    Kode Item<span className="sort-indicator">{getSortIndicator("Kode_Item")}</span>
+                  </th>
+                  <th onClick={() => handleSort("Nama_Item")}>
+                    Nama Item<span className="sort-indicator">{getSortIndicator("Nama_Item")}</span>
+                  </th>
+                  <th onClick={() => handleSort("Total_Stok_Akhir")}>
+                    Stok Akhir<span className="sort-indicator">{getSortIndicator("Total_Stok_Akhir")}</span>
+                  </th>
+                  <th onClick={() => handleSort("Total_Jumlah_Beli")}>
+                    Total Beli<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Beli")}</span>
+                  </th>
+                  <th onClick={() => handleSort("Total_Jumlah_Jual")}>
+                    Total Jual<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Jual")}</span>
+                  </th>
+                  <th onClick={() => handleSort("Total_Jumlah_Retur")}>
+                    Total Retur<span className="sort-indicator">{getSortIndicator("Total_Jumlah_Retur")}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item) => (
+                  <tr key={item.Kode_Item}>
+                    <td>{item.Kode_Item}</td>
+                    <td>{item.Nama_Item}</td>
+                    <td className={item.Total_Stok_Akhir < 0 ? "stock-negative" : ""}>
+                      {item.Total_Stok_Akhir}
+                    </td>
+                    <td>{item.Total_Jumlah_Beli}</td>
+                    <td>{item.Total_Jumlah_Jual}</td>
+                    <td>{item.Total_Jumlah_Retur}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
+                ⬅️ Sebelumnya
+              </button>
+              <span>
+                Halaman {currentPage} dari {totalPages}
+              </span>
+              <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
+                Selanjutnya ➡️
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };
