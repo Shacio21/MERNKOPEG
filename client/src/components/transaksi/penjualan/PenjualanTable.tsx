@@ -259,47 +259,54 @@ const toggleSelectRow = (id: string) => {
       </div>
 
       {/* ✅ Tombol tambah, CSV, Export */}
-      <div className="csv-btn-group">
-        <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
-          Upload CSV
-        </button>
+        <div className="csv-btn-group">
+          {/* 🔹 Tombol tambah data manual */}
+          <button className="add-btn" onClick={() => setShowAddModal(true)}>
+            + Tambah Data
+          </button>
 
-        {/* 🔽 Filter bulan dan tahun sebelum export */}
-        <select
-          value={bulanFilter}
-          onChange={(e) => setBulanFilter(e.target.value)}
-          className="filter-select"
-        >
-          <option value="">Semua Bulan</option>
-          <option value="Januari">Januari</option>
-          <option value="Februari">Februari</option>
-          <option value="Maret">Maret</option>
-          <option value="April">April</option>
-          <option value="Mei">Mei</option>
-          <option value="Juni">Juni</option>
-          <option value="Juli">Juli</option>
-          <option value="Agustus">Agustus</option>
-          <option value="September">September</option>
-          <option value="Oktober">Oktober</option>
-          <option value="November">November</option>
-          <option value="Desember">Desember</option>
-        </select>
+          {/* 🔹 Tombol upload CSV */}
+          <button className="csv-btn" onClick={() => setShowCsvModal(true)}>
+            Upload CSV
+          </button>
 
-        <select
-          value={tahunFilter}
-          onChange={(e) => setTahunFilter(e.target.value)}
-          className="filter-select"
-        >
-          <option value="">Semua Tahun</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-        </select>
+          {/* 🔽 Filter bulan dan tahun sebelum export */}
+          <select
+            value={bulanFilter}
+            onChange={(e) => setBulanFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Semua Bulan</option>
+            <option value="Januari">Januari</option>
+            <option value="Februari">Februari</option>
+            <option value="Maret">Maret</option>
+            <option value="April">April</option>
+            <option value="Mei">Mei</option>
+            <option value="Juni">Juni</option>
+            <option value="Juli">Juli</option>
+            <option value="Agustus">Agustus</option>
+            <option value="September">September</option>
+            <option value="Oktober">Oktober</option>
+            <option value="November">November</option>
+            <option value="Desember">Desember</option>
+          </select>
 
-        <button className="export-btn" onClick={handleExportCSV}>
-          Export CSV
-        </button>
-      </div>
+          <select
+            value={tahunFilter}
+            onChange={(e) => setTahunFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Semua Tahun</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+
+          <button className="export-btn" onClick={handleExportCSV}>
+            Export CSV
+          </button>
+        </div>
+
 
 
       {/* 📊 Tabel */}

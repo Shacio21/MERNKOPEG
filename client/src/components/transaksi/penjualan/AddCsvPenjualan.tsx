@@ -37,7 +37,7 @@ const AddCsvPembelian: React.FC<AddCsvPembelianProps> = ({ onClose }) => {
       setError(null);
       setMessage(null);
 
-      const res = await fetch(`${BASE_URL}/api/pembelian/upload-csv`, {
+      const res = await fetch(`${BASE_URL}/api/penjualan/upload-csv`, {
         method: "POST",
         body: formData,
       });
@@ -63,7 +63,7 @@ const AddCsvPembelian: React.FC<AddCsvPembelianProps> = ({ onClose }) => {
 
   return (
     <div className="csv-container">
-      <h2 className="csv-title">Upload CSV Pembelian</h2>
+      <h2 className="csv-title">Upload CSV Penjualan</h2>
 
       <form onSubmit={handleUpload} className="csv-form">
         <input
