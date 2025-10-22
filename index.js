@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // koneksi ke MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/kopeg_db')
+mongoose.connect('mongodb://127.0.0.1:27017/db_kopeg')
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
