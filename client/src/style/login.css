@@ -1,37 +1,55 @@
-.login-container {
-  width: 350px;
-  margin: 100px auto;
-  padding: 30px;
-  border-radius: 12px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+/* SCOPED hanya untuk login */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   font-family: "Poppins", sans-serif;
 }
 
-h2 {
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 40px 35px;
+  border-radius: 20px;
+  width: 360px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+}
+
+.login-title {
+  font-weight: 700;
   color: #222;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 24px;
 }
 
 .input-group {
   text-align: left;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 5px;
   font-weight: 600;
   color: #333;
+  margin-bottom: 6px;
 }
 
 .input-group input {
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+  font-size: 15px;
+  transition: all 0.2s;
 }
 
 .input-group input:focus {
@@ -39,29 +57,35 @@ h2 {
   outline: none;
 }
 
-button {
+.login-wrapper button {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 12px;
+  background: linear-gradient(90deg, #007bff, #00bcd4);
   border: none;
   color: white;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  transition: all 0.3s ease-in-out;
 }
 
-button:hover {
-  background-color: #0056b3;
+.login-wrapper button:hover {
+  background: linear-gradient(90deg, #0062cc, #00a6c4);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
 }
 
-button:disabled {
-  background-color: #999;
-  cursor: not-allowed;
+.login-wrapper .input-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+  font-size: 15px;
+  transition: all 0.2s;
 }
 
-.error-text {
-  color: red;
-  font-size: 14px;
-  margin-top: 10px;
+.login-wrapper .input-group input:focus {
+  border-color: #007bff;
+  outline: none;
 }
