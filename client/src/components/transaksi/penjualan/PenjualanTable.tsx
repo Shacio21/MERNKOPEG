@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../../style/Transaksi/pembelian.css";
 import Pagination from "../pembelian/Pagination";
-import AddPembelian from "../pembelian/AddPembelian";
+import AddPenjualan from "./AddPenjualan";
 import AddCsvPenjualan from "./AddCsvPenjualan";
 import Filter from "../pembelian/Filter";
 import UpdatePenjualan from "./UpdatePenjualan";
@@ -395,7 +395,7 @@ const toggleSelectRow = (id: string) => {
 
       {/* Modal Tambah */}
       {showAddModal && (
-        <AddPembelian
+        <AddPenjualan
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddSubmit}
         />

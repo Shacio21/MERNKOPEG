@@ -1,246 +1,194 @@
-/* --- BARU: Global & Body Styling --- */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+/* ===============================
+   🎯 STOK OPNAME PAGE STYLING
+   =============================== */
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f4f7f9; /* Latar belakang abu-abu terang */
-  color: #333;
-}
-
-/* Main container for the stock table page */
+/* Container utama */
 .stock-container {
-  width: 95%;
   max-width: 1200px;
   margin: 40px auto;
-  background-color: #ffffff;
-  border-radius: 20px; /* Sedikit lebih bulat */
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1); /* Shadow lebih lembut */
-  padding: 30px 35px;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+  color: #2c3e50;
 }
 
-/* --- DIPERBAIKI: Judul dengan Ikon --- */
+/* Judul utama */
 .stock-title {
-  display: flex; /* Menggunakan flexbox */
-  align-items: center;
-  justify-content: center;
-  gap: 12px; /* Jarak antara ikon dan teks */
   font-size: 1.8rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: #34495e;
+  text-align: center;
   margin-bottom: 30px;
 }
 
-/* --- Container untuk semua kontrol filter & search --- */
-.controls-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 25px;
-  align-items: center;
-}
+/* ===============================
+   📤 UPLOAD AREA
+   =============================== */
 
-.search-container {
-  flex-grow: 1;
-  min-width: 250px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 18px;
-  border-radius: 10px; /* Sedikit lebih bulat */
-  border: 1px solid #dfe4ea;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-}
-
-.filter-group {
-  display: flex;
-  gap: 10px;
-}
-
-.filter-select,
-.filter-input-year {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #dfe4ea;
-  font-size: 1rem;
-  background-color: #fff;
-}
-
-.filter-input-year {
-  width: 100px;
-}
-
-.filter-select:focus,
-.filter-input-year:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-}
-
-/* Wrapper untuk tabel agar bisa di-scroll horizontal */
-.table-wrapper {
-  overflow-x: auto;
-}
-
-/* Main table styling */
-.stock-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.stock-table th,
-.stock-table td {
-  padding: 15px 18px;
-  border-bottom: 1px solid #f0f0f0;
-  vertical-align: middle; /* --- BARU: Agar teks di tengah secara vertikal --- */
-}
-
-/* --- DIPERBAIKI: Table header styling --- */
-.stock-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #555;
+/* Drop area */
+.upload-drop-area {
+  border: 2px dashed #3498db;
+  background-color: #fafdff;
+  padding: 40px;
+  border-radius: 12px;
   cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s;
-  white-space: nowrap;
-  text-transform: uppercase; /* Teks menjadi kapital */
-  font-size: 0.8rem; /* Sedikit lebih kecil */
-  letter-spacing: 0.5px; /* Jarak antar huruf */
-}
-
-.stock-table th:hover {
-  background-color: #e9ecef;
-}
-
-.sort-indicator {
-  color: #3498db;
-  margin-left: 4px;
-}
-
-/* --- DIPERBAIKI: Table body row styling --- */
-.stock-table tbody tr {
-  transition: background-color 0.25s ease; /* Transisi hover lebih halus */
-}
-
-.stock-table tbody tr:last-child td {
-  border-bottom: none; /* Hilangkan border di baris terakhir */
-}
-
-.stock-table tbody tr:hover {
-  background-color: #f5fafe;
-}
-
-/* --- BARU: Conditional styling untuk stok negatif --- */
-.stock-negative {
-  color: #e74c3c;
-  font-weight: 600;
-}
-
-/* Pagination controls styling */
-.pagination {
+  width: 100%;
   display: flex;
-  justify-content: space-between; /* --- DIPERBAIKI: Mendorong tombol ke ujung --- */
-  align-items: center;
-  padding: 20px 10px 0; /* Memberi jarak dari tabel */
-  color: #555;
-}
-
-.pagination button {
-  background-color: #ffffff;
-  border: 1px solid #dfe4ea;
-  border-radius: 8px;
-  padding: 8px 16px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.pagination button:hover:not(:disabled) {
-  background-color: #3498db;
-  color: #ffffff;
-  border-color: #3498db;
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
-}
-
-.pagination button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Unified style for loading and error messages */
-.status-message {
+  justify-content: center;
   text-align: center;
-  font-size: 1.1rem;
-  color: #7f8c8d;
-  padding: 50px 20px;
-  font-weight: 500;
-  background-color: #f8f9fa;
-  border-radius: 8px;
+  transition: 0.2s ease;
 }
 
-.status-message.error {
-  color: #e74c3c;
-  background-color: #fbecec;
+.upload-drop-area:hover {
+  background-color: #e8f6ff;
+  border-color: #1e7cc8;
 }
 
-/* --- BARU: Media Query untuk Mobile --- */
-@media (max-width: 768px) {
-  .controls-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .stock-title {
-    font-size: 1.5rem;
-  }
-  
-  .stock-container {
-    padding: 20px;
-  }
+.upload-drop-area input {
+  display: none;
 }
 
-.button-group {
-  display: flex;
-  gap: 10px;
+.upload-text {
+  font-size: 1rem;
+  color: #34495e;
 }
 
-.export-button {
-  background-color: #007bff;
+/* Tombol Upload */
+.upload-button {
+  background-color: #3498db;
+  padding: 12px 22px;
+  margin-top: 18px;
+  border-radius: 10px;
   color: white;
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: background-color 0.2s ease;
+  font-size: 1rem;
+  transition: 0.25s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.export-button:hover {
-  background-color: #0056b3;
+.upload-button:hover {
+  background-color: #1b7cbc;
+  transform: translateY(-1px);
 }
 
-.export-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+/* ===============================
+   📊 TABEL PERBEDAAN (CARD STYLE)
+   =============================== */
+
+.perbedaan-wrapper {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 25px 30px;
+  margin-top: 40px;
+  overflow-x: auto;
+  transition: 0.3s ease;
+  animation: fadeInUp 0.4s ease;
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
+/* Animasi lembut saat muncul */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
+/* Judul tabel */
+.perbedaan-wrapper h3 {
+  margin-bottom: 18px;
+  color: #2c3e50;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* Tabel */
+.perbedaan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Header tabel */
+.perbedaan-table th {
+  background-color: #3498db;
+  color: #ffffff;
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 500;
+}
+
+/* Sel tabel */
+.perbedaan-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+/* Baris bergantian warna */
+.perbedaan-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+/* Efek hover */
+.perbedaan-table tbody tr:hover {
+  background-color: #eaf6ff;
+  transition: 0.2s ease;
+}
+
+/* ===============================
+   🎨 WARNA UNTUK NILAI BERBEDA
+   =============================== */
+
+/* Data CSV (berbeda dengan DB) */
+.perbedaan-table td.csv {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* Data dari Database */
+.perbedaan-table td.db {
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+/* Keterangan */
+.perbedaan-table td:last-child {
+  font-style: italic;
+  color: #7f8c8d;
+}
+
+/* ===============================
+   📱 RESPONSIVE DESIGN
+   =============================== */
+
+@media (max-width: 768px) {
+  .upload-drop-area {
+    padding: 25px;
+  }
+
+  .upload-text {
+    font-size: 0.9rem;
+  }
+
+  .upload-button {
+    width: 100%;
+  }
+
+  .perbedaan-wrapper {
+    padding: 18px;
+  }
+
+  .perbedaan-table th,
+  .perbedaan-table td {
+    font-size: 0.85rem;
+    padding: 10px;
   }
 }

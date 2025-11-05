@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import "../../../style/Transaksi/pembelian.css";
+import "../../../style/Transaksi/pembelian.css"; // tetap pakai CSS yang sama
 
-interface AddPembelianProps {
+interface AddPenjualanProps {
   onClose: () => void;
   onSubmit: (newData: any) => void;
 }
 
-const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
+const AddPenjualan: React.FC<AddPenjualanProps> = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     Kode_Item: "",
     Nama_Item: "",
@@ -15,10 +15,10 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
     Satuan: "",
     Total_Harga: "",
     Bulan: "",
-    Tahun: "",
+    Tahun: new Date().getFullYear().toString(), // default tahun sekarang
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -32,9 +32,11 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
   return (
     <div className="addpembelian-overlay">
       <div className="addpembelian-container">
-        <h2>Tambah Data Pembelian</h2>
+        <h2>Tambah Data Penjualan</h2>
+
         <form onSubmit={handleSubmit} className="addpembelian-form">
           <div className="form-grid">
+
             <div className="form-group">
               <label>Kode Item</label>
               <input
@@ -45,6 +47,7 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
             <div className="form-group">
               <label>Nama Item</label>
               <input
@@ -55,6 +58,7 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
             <div className="form-group">
               <label>Jenis</label>
               <input
@@ -65,6 +69,7 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
             <div className="form-group">
               <label>Jumlah</label>
               <input
@@ -75,6 +80,7 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
             <div className="form-group">
               <label>Satuan</label>
               <input
@@ -85,6 +91,7 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
             <div className="form-group">
               <label>Total Harga</label>
               <input
@@ -95,16 +102,26 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
             <div className="form-group">
               <label>Bulan</label>
-              <input
-                type="text"
-                name="Bulan"
-                value={formData.Bulan}
-                onChange={handleChange}
-                required
-              />
+              <select name="Bulan" value={formData.Bulan} onChange={handleChange} required>
+                <option value="">-- Pilih Bulan --</option>
+                <option value="Januari">Januari</option>
+                <option value="Februari">Februari</option>
+                <option value="Maret">Maret</option>
+                <option value="April">April</option>
+                <option value="Mei">Mei</option>
+                <option value="Juni">Juni</option>
+                <option value="Juli">Juli</option>
+                <option value="Agustus">Agustus</option>
+                <option value="September">September</option>
+                <option value="Oktober">Oktober</option>
+                <option value="November">November</option>
+                <option value="Desember">Desember</option>
+              </select>
             </div>
+
             <div className="form-group">
               <label>Tahun</label>
               <input
@@ -115,6 +132,7 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
                 required
               />
             </div>
+
           </div>
 
           <div className="form-actions">
@@ -131,4 +149,4 @@ const AddPembelian: React.FC<AddPembelianProps> = ({ onClose, onSubmit }) => {
   );
 };
 
-export default AddPembelian;
+export default AddPenjualan;
