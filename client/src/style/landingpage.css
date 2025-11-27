@@ -1,12 +1,28 @@
+/* =============== GLOBAL BACKGROUND (FIXED) =============== */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* <-- INI KUNCINYA */
+  background: linear-gradient(
+    135deg,
+    #1e392a 0%,
+    #b59f57 50%,
+    #999999 100%
+  );
+  background-attachment: fixed;  
+  background-size: cover;
+  font-family: "Poppins", sans-serif;
+}
+
+
 /* ================= Navbar ================== */
-/* Navbar Container */
 .navbar {
   position: fixed;       
   top: 0;
   left: 0;
   width: 100%;           
   height: 110px;
-  background-color: #344c38;
+  background: none;       /* transparan, biar kelihatan background global */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,7 +31,6 @@
   z-index: 1000;         
 }
 
-/* Left Section: Logos + Brand */
 .navbar-left {
   display: flex;
   align-items: center;
@@ -34,7 +49,6 @@
   color: #ffffff;
 }
 
-/* Menu */
 .navbar-menu {
   display: flex;
   list-style: none;
@@ -76,18 +90,11 @@
   position: relative;
   width: 100%;
   height: 954px;
-  background-size: cover;
-  background-position: center;
-}
-.hero-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, #263c28 -0.7%, rgba(38, 60, 40, 0.8) -0.69%, rgba(0, 0, 0, 0) 100%);
+  background: none; /* transparan, pakai background global */
+  display: flex;
+  align-items: center;
 }
 
-
-/* Konten Text */
 .hero-content {
   position: absolute;
   width: 730px;
@@ -109,7 +116,7 @@
   position: absolute;
   top: 16px;
   left: 0;
-  width: 150px;
+  width: 140px;
   height: 2px;
   background: #f7c35f;
 }
@@ -120,12 +127,11 @@
   left: 0;
   font-family: "Century Gothic", sans-serif;
   font-weight: 700;
-  font-size: 40px;
+  font-size: 35px;
   line-height: 30px;
   color: #ffffff;
 }
 
-/* Teks utama */
 .hero-text {
   display: flex;
   flex-direction: column;
@@ -143,7 +149,7 @@
 .title-yellow {
   font-family: "Livvic", sans-serif;
   font-weight: 700;
-  font-size: 70px;
+  font-size: 60px;
   line-height: 88px;
   color: #f7c35f;
   margin: 0;
@@ -169,7 +175,6 @@
   margin: 0;
 }
 
-/* Deskripsi */
 .hero-description {
   font-family: "Century Gothic", sans-serif;
   font-size: 20px;
@@ -179,7 +184,6 @@
   margin: 0;
 }
 
-/* Tombol */
 .hero-button {
   display: inline-flex;
   align-items: center;
@@ -199,4 +203,765 @@
 
 .hero-button:hover {
   background: #e5b84f;
+}
+
+
+/* ================= INFORMATION SECTION ================== */
+.intro-section {
+  position: relative;
+  background-color: #6d8c54;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 80px 80px;
+  box-sizing: border-box;
+  overflow: hidden; 
+  font-family: 'Livvic', sans-serif;
+  color: #ffffff;
+  min-height: 910px;
+
+  /* Metode full-width yang akan bekerja setelah global-fix */
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+
+/* Elemen dekoratif bisa tetap menggunakan position: absolute */
+.intro-left-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 658px;
+  height: 497px;
+  background: #263c28;
+  z-index: 0; /* Taruh di belakang */
+}
+
+.intro-yellow-bar {
+  position: absolute;
+  left: 220px;
+  top: 473px;
+  width: 20px;
+  height: 258px;
+  background: #f7c35f;
+  border-radius: 5px 0 0 5px;
+  z-index: 0; /* Taruh di belakang */
+}
+
+/* Kolom Gambar (Kiri) */
+.intro-image-container {
+  /* HAPUS: position: absolute; left: 240px; top: 100px; */
+  position: relative; /* UBAH: Jadi relative agar .project-card bisa absolut di dalamnya */
+  flex-basis: 50%; /* Atur lebar kolom, misal 50% */
+  max-width: 564px; /* Batasi lebar maksimum agar tidak terlalu besar */
+  z-index: 1;
+}
+
+.intro-image {
+  width: 100%; /* Lebar 100% dari parent-nya */
+  height: auto; /* Tinggi otomatis agar proporsional */
+  object-fit: cover;
+  border-radius: 10px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+  display: block;
+}
+
+.project-card {
+  position: absolute; /* Tetap absolute, relatif terhadap .intro-image-container */
+  bottom: -100px;
+  left: 60px;
+  width: 428px;
+  height: 140px;
+  background: #1f3221;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  gap: 30px;
+}
+
+/* Kolom Teks (Kanan) */
+.intro-text {
+  /* HAPUS: position: absolute; left: 884px; top: 119px; */
+  flex-basis: 50%; /* Atur lebar kolom, misal 50% */
+  max-width: 796px; /* Batasi lebar maksimum */
+  display: flex;
+  flex-direction: column;
+  gap: 40px; /* Atur ulang jarak agar lebih konsisten */
+  z-index: 1;
+}
+
+
+/* Styling di dalam card dan teks bisa tetap sama */
+.project-icon {
+  width: 76px;
+  height: 70px;
+  background-color: #f7c35f;
+  border-radius: 8px;
+}
+
+.project-line {
+  width: 1px;
+  height: 77px;
+  background: #ffffff33;
+}
+
+.project-text h2 {
+  font-family: 'Mistral', cursive;
+  font-size: 40px;
+  color: #f7c35f;
+  margin: 0;
+}
+
+.project-text p {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 4px 0 0;
+}
+
+.intro-sub {
+  font-family: 'Century Gothic', sans-serif;
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.intro-title h1 {
+  font-weight: 700;
+  font-size: 50px;
+  line-height: 63px;
+  margin: 0;
+  color: #ffffff;
+}
+
+.intro-desc h3 {
+  color: #f7c35f;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.intro-desc p {
+  font-family: 'Century Gothic', sans-serif;
+  font-size: 18px;
+  line-height: 27px;
+  color: #ffffff;
+}
+
+.intro-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.intro-list li {
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
+
+.intro-list li::before {
+  content: '\2713'; /* check icon */
+  color: #f7c35f;
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+/* ================= ANGGOTA SECTION ================== */
+
+/* ================= ANGGOTA SECTION (IMPROVED) ================== */
+
+.fasilitas-section {
+  /* Definisikan variabel warna di sini */
+  --bg-section: #263c28;
+  --primary-yellow: #f7c35f;
+  --text-primary: #ffffff;
+  --card-bg: rgba(217, 217, 217, 0.1);
+
+  background-color: var(--bg-section);
+  color: var(--text-primary);
+  text-align: center;
+  box-sizing: border-box; 
+  
+  /* === PERBAIKAN & PENYESUAIAN === */
+  position: relative;
+  padding: 80px 80px; /* 1. Padding disamakan agar sejajar dengan section lain */
+  
+  /* 2. Trik full-bleed agar latar belakang penuh selebar layar */
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.fasilitas-title {
+  margin-bottom: 60px;
+}
+
+.fasilitas-title .subtitle {
+  font-family: "Century Gothic", sans-serif;
+  font-size: 30px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.fasilitas-title h2 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 700;
+  font-size: 50px;
+  color: var(--text-primary);
+  margin: 0; /* Hapus margin default dari h2 */
+}
+
+.fasilitas-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.fasilitas-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(25px);
+  border-radius: 15px;
+  width: 300px;
+  /* Hapus height tetap agar lebih fleksibel */
+  min-height: 290px;
+  padding: 35px 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fasilitas-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.fasilitas-icon {
+  background-color: var(--primary-yellow);
+  color: var(--bg-section);
+  font-size: 2.2rem;
+  border-radius: 10px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Mencegah ikon menyusut */
+}
+
+.fasilitas-card h3 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.fasilitas-card p {
+  font-family: "Livvic", sans-serif;
+  font-size: 18px;
+  line-height: 25px;
+  color: var(--text-primary);
+  opacity: 0.9;
+}
+
+/* Responsif (sudah bagus, tidak perlu diubah) */
+@media (max-width: 1024px) {
+  .fasilitas-grid {
+    gap: 20px;
+  }
+  .fasilitas-card {
+    width: 45%;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .fasilitas-card {
+    width: 100%;
+  }
+  .fasilitas-title h2 {
+    font-size: 36px;
+  }
+}
+
+
+/* ================= KEUNTUNGAN & KERUGIAN SECTION (DIPERBAIKI) ================== */
+
+/* ================= KEUNTUNGAN SECTION (FINAL) ================== */
+
+.keuntungan-section {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 705px;
+  background-color: #6d8c54;
+  overflow: hidden;
+  box-sizing: border-box;
+  
+  /* Trik full-bleed (sudah benar) */
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* (Sisa kode Anda di bawah ini tidak perlu diubah, sudah bagus) */
+
+.bg-image {
+  flex: 1;
+  min-width: 400px;
+  object-fit: cover;
+}
+
+.keuntungan-content {
+  flex: 1;
+  min-width: 400px;
+  padding: 80px 100px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.section-title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+.title {
+  font-family: 'Livvic', sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+}
+
+.icon-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: #344c31;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Efek transisi */
+}
+
+.icon-circle:hover {
+  transform: scale(1.1); /* Sedikit membesar saat disentuh kursor */
+  background-color: #4b623d; /* Warna sedikit lebih terang */
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain; /* Pastikan ikon tidak terpotong */
+}
+
+.info-text h2 {
+  font-family: 'Livvic', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.info-text p {
+  font-family: 'Cabin Condensed', sans-serif;
+  font-size: 18px;
+  line-height: 27px;
+  color: #fff;
+}
+
+.divider {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 900px) {
+  .keuntungan-content {
+    padding: 60px 40px;
+  }
+  .bg-image {
+    max-height: 400px;
+  }
+}
+
+/* ================= PRODUCT SLIDER (FINAL) ================== */
+
+.explore-section {
+  padding: 80px 0; 
+  background-color: #263c28;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+
+  /* === Tambahan Pola Full-Bleed === */
+  box-sizing: border-box;
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.explore-title {
+  margin-bottom: 50px;
+  padding: 0 5%; /* Beri padding di sini agar judul tidak menempel */
+}
+
+.subtitle {
+  color: white;
+  letter-spacing: 2px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.explore-title h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-top: 10px;
+  color: #f7c35f;
+}
+
+/* Container utama sebagai "viewport" */
+.scroll-container {
+  width: 100%;
+  overflow: hidden;
+  /* Properti untuk menyamarkan tepi agar terlihat menyatu */
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* Konten yang akan bergerak */
+.scroll-content {
+  display: flex;
+  gap: 25px;
+  width: fit-content; /* Lebar sesuai total konten di dalamnya */
+  /* Animasi scroll */
+  animation: scroll 40s linear infinite;
+}
+
+/* Jeda animasi saat kursor di atasnya */
+.scroll-container:hover .scroll-content {
+  animation-play-state: paused;
+}
+
+/* Definisi animasi scroll */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Bergerak ke kiri sejauh setengah dari total lebar (karena item diduplikasi) */
+    transform: translateX(-50%);
+  }
+}
+
+/* Kartu produk */
+.product-card {
+  width: 260px;
+  flex-shrink: 0; /* Mencegah kartu menyusut */
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: #1b2b1d;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+}
+
+.product-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-text {
+  padding: 15px;
+}
+
+.card-text h3 {
+  font-size: 1.2rem;
+  color: #f7c35f;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.card-text p {
+  font-size: 0.9rem;
+  color: #ddd;
+  line-height: 1.3;
+  margin: 0;
+}
+
+
+
+
+/* ================= FOOTER ================== */
+
+/* ================= FOOTER (FINAL) ================== */
+
+.footer {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-family: "Century Gothic", sans-serif;
+  padding: 60px 100px 30px 100px;
+  position: relative;
+  box-sizing: border-box;
+
+  /* Pola Full-Bleed */
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* --- Grid Layout --- */
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 60px;
+  flex-wrap: nowrap;
+}
+
+/* --- LEFT --- */
+.footer-left {
+  flex: 1.2;
+  max-width: 450px;
+}
+
+.footer-left h2 {
+  font-family: "Livvic", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.footer-left p {
+  font-size: 15px;
+  line-height: 24px;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.divider {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 20px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 20px;
+}
+
+.social-icons a {
+  color: #f7c35f;
+  font-size: 22px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+  transform: scale(1.2);
+  color: #ffffff;
+}
+
+/* --- MIDDLE (Group Members) --- */
+.footer-middle {
+  flex: 1;
+  text-align: center;
+}
+
+.footer-middle h3 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #f7c35f;
+  margin-bottom: 20px;
+}
+
+.footer-middle ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: inline-block;
+  text-align: left;
+}
+
+.footer-middle li {
+  margin-bottom: 10px;
+}
+
+.footer-middle a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.footer-middle a:hover {
+  color: #f7c35f;
+  text-shadow: 0 0 8px rgba(247, 195, 95, 0.7);
+  transform: translateY(-2px);
+}
+
+/* --- RIGHT (Kritik & Saran) --- */
+.footer-right {
+  flex: 1;
+  max-width: 340px;
+}
+
+.footer-right h3 {
+  font-family: "Livvic", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #f7c35f;
+  margin-bottom: 20px;
+}
+
+.footer-right p {
+  font-size: 15px;
+  line-height: 24px;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+/* Form Kritik & Saran */
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: #263c28;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  resize: none;
+}
+
+.feedback-form input::placeholder,
+.feedback-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.feedback-form button {
+  align-self: flex-end;
+  background-color: #f7c35f;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.feedback-form button:hover {
+  background-color: #ffcf6b;
+  transform: scale(1.05);
+}
+
+/* --- Divider --- */
+.footer-divider {
+  margin-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- Bottom --- */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #ffffff;
+}
+
+.footer-links {
+  display: flex;
+  gap: 25px;
+}
+
+.footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #f7c35f;
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 1024px) {
+  .footer {
+    padding: 50px 60px;
+  }
+
+  .footer-container {
+    flex-wrap: wrap;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .footer-left,
+  .footer-middle,
+  .footer-right {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .footer-right form {
+    align-items: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
 }

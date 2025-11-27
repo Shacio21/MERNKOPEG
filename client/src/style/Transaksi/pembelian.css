@@ -1,0 +1,546 @@
+/* ============== PembelianTable ============== */
+/* Container */
+.pembelian-container {
+  max-width: 1300px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.pembelian-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #344c38;
+}
+
+/* Table Style */
+.pembelian-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.pembelian-table thead {
+  background: #344c38;
+  color: #ffffff;
+}
+
+.pembelian-table th,
+.pembelian-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.pembelian-table tr:hover {
+  background-color: #ccdcd1;
+  transition: 0.3s;
+}
+
+.pembelian-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.pembelian-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* ============== Pagination ============== */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.pagination-btn {
+  background-color: #344c38;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 14px;
+}
+
+.pagination-btn:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #45694e;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #344c38;
+  font-weight: 500;
+}
+
+/* ============ Search Form ============ */
+.search-form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+
+.search-input {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  min-width: 300px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: #344c38;
+}
+
+.search-btn {
+  background-color: #344c38;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 14px;
+}
+
+.search-btn:hover {
+  background-color: #45694e;
+}
+
+
+
+/* ============ Add ============ */
+/* Overlay gelap */
+.addpembelian-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Container popup */
+.addpembelian-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 600px;
+  max-width: 90%;
+  padding: 30px;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Title */
+.addpembelian-container h2 {
+  text-align: center;
+  color: #344c38;
+  margin-bottom: 20px;
+}
+
+/* Grid form 2 kolom */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Form group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #344c38;
+  font-size: 14px;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #344c38;
+}
+
+/* Tombol aksi */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  gap: 12px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background: #b0b0b0;
+}
+
+.submit-btn {
+  background: #344c38;
+  color: white;
+}
+
+.submit-btn:hover {
+  background: #45694e;
+}
+
+/* Animasi muncul */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.add-btn {
+  background-color: #344c38;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.add-btn:hover {
+  background-color: #45694e;
+}
+
+
+/* ============ CSV Upload Container ============ */
+.csv-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.csv-title {
+  font-size: 1.5rem;
+  color: #344c38;
+  margin-bottom: 20px;
+}
+
+/* Form */
+.csv-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.csv-input {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+}
+
+.csv-btn {
+  background-color: #344c38;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.csv-btn:hover:not(:disabled) {
+  background-color: #45694e;
+}
+
+.csv-btn:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+/* Message */
+.csv-message {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.csv-message.success {
+  color: green;
+}
+
+.csv-message.error {
+  color: red;
+}
+
+/* Info */
+.csv-info {
+  margin-top: 20px;
+  text-align: left;
+  font-size: 13px;
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  color: #344c38;
+}
+
+.csv-info ul {
+  margin-top: 8px;
+  padding-left: 18px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.csv-btn {
+  margin-left: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.csv-btn:hover {
+  background-color: #0056b3;
+}
+
+/* ============ Pembelian ============ */
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  background: #f7f9fc;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.filter-label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.filter-select {
+  margin-left: 8px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.filter-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.filter-btn:hover {
+  background-color: #0056b3;
+}
+
+.filter-button-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.filter-btn.reset-btn {
+  background-color: #ccc;
+  color: #333;
+}
+
+.filter-btn.reset-btn:hover {
+  background-color: #aaa;
+}
+
+/* Kolom tombol agar lebih rapih */
+.action-cell {
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Tombol umum */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: auto;
+  min-width: 60px;
+}
+
+/* Tombol Edit */
+.edit-btn {
+  background-color: #344c38;
+  color: #ffffff;
+}
+
+.edit-btn:hover {
+  background-color: #47614a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Tombol Hapus */
+.delete-btn {
+  background-color: #e53935;
+  color: #ffffff;
+}
+
+.delete-btn:hover {
+  background-color: #c62828;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Tambahan jarak antar tombol */
+.action-btn:not(:last-child) {
+  margin-right: 6px;
+}
+
+.csv-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.export-btn {
+  background-color: #3b82f6;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.export-btn:hover {
+  background-color: #2563eb;
+}
+
+
+.csv-btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.csv-btn-cancel {
+  background-color: #e63946;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.csv-btn-cancel:hover {
+  background-color: #c92a35;
+}
+
+
+.pembelian-table tr:hover {
+  background-color: #f3f3f3;
+  transition: background-color 0.3s ease;
+}
+
+.pembelian-table tr input[type="checkbox"] {
+  cursor: pointer;
+  transform: scale(1.2);
+}

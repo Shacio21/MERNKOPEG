@@ -1,0 +1,194 @@
+/* ===============================
+   🎯 STOK OPNAME PAGE STYLING
+   =============================== */
+
+/* Container utama */
+.stock-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: "Poppins", sans-serif;
+  color: #2c3e50;
+}
+
+/* Judul utama */
+.stock-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #34495e;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* ===============================
+   📤 UPLOAD AREA
+   =============================== */
+
+/* Drop area */
+.upload-drop-area {
+  border: 2px dashed #3498db;
+  background-color: #fafdff;
+  padding: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  transition: 0.2s ease;
+}
+
+.upload-drop-area:hover {
+  background-color: #e8f6ff;
+  border-color: #1e7cc8;
+}
+
+.upload-drop-area input {
+  display: none;
+}
+
+.upload-text {
+  font-size: 1rem;
+  color: #34495e;
+}
+
+/* Tombol Upload */
+.upload-button {
+  background-color: #3498db;
+  padding: 12px 22px;
+  margin-top: 18px;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.25s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.upload-button:hover {
+  background-color: #1b7cbc;
+  transform: translateY(-1px);
+}
+
+/* ===============================
+   📊 TABEL PERBEDAAN (CARD STYLE)
+   =============================== */
+
+.perbedaan-wrapper {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 25px 30px;
+  margin-top: 40px;
+  overflow-x: auto;
+  transition: 0.3s ease;
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Animasi lembut saat muncul */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Judul tabel */
+.perbedaan-wrapper h3 {
+  margin-bottom: 18px;
+  color: #2c3e50;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* Tabel */
+.perbedaan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Header tabel */
+.perbedaan-table th {
+  background-color: #3498db;
+  color: #ffffff;
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 500;
+}
+
+/* Sel tabel */
+.perbedaan-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+/* Baris bergantian warna */
+.perbedaan-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+/* Efek hover */
+.perbedaan-table tbody tr:hover {
+  background-color: #eaf6ff;
+  transition: 0.2s ease;
+}
+
+/* ===============================
+   🎨 WARNA UNTUK NILAI BERBEDA
+   =============================== */
+
+/* Data CSV (berbeda dengan DB) */
+.perbedaan-table td.csv {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* Data dari Database */
+.perbedaan-table td.db {
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+/* Keterangan */
+.perbedaan-table td:last-child {
+  font-style: italic;
+  color: #7f8c8d;
+}
+
+/* ===============================
+   📱 RESPONSIVE DESIGN
+   =============================== */
+
+@media (max-width: 768px) {
+  .upload-drop-area {
+    padding: 25px;
+  }
+
+  .upload-text {
+    font-size: 0.9rem;
+  }
+
+  .upload-button {
+    width: 100%;
+  }
+
+  .perbedaan-wrapper {
+    padding: 18px;
+  }
+
+  .perbedaan-table th,
+  .perbedaan-table td {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+}

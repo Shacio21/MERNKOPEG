@@ -1,0 +1,45 @@
+/* Main container for the profit chart component */
+.laba-container {
+  width: 95%;
+  max-width: 1000px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 25px 30px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Add a slightly larger shadow on hover for a subtle lifting effect */
+.laba-container:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Styles for the chart title */
+.laba-title {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 25px;
+}
+
+/* Wrapper to define the chart's dimensions */
+.laba-chart-wrapper {
+  width: 100%;
+  height: 400px; /* Fixed height for consistency */
+}
+
+/* Unified style for loading and error messages */
+.laba-status {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-top: 100px;
+  font-weight: 500;
+}
+
+/* Specific color for error messages */
+.laba-status.error {
+  color: #e74c3c; /* A distinct red for errors */
+}
