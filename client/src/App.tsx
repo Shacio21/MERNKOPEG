@@ -19,71 +19,26 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ✅ Landing Page sekarang pakai ProtectedRoute */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <LandingPage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Login Page */}
+        {/* Semua halaman INI bebas diakses */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/rekap" element={<Rekap />} />
+        <Route path="/stok" element={<Stok />} />
+        <Route path="/prediksi" element={<PrediksiPage />} />
 
-        {/* Protected routes */}
-        <Route
-          path="/rekap"
-          element={
-            <ProtectedRoute>
-              <Rekap />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/stok"
-          element={
-            <ProtectedRoute>
-              <Stok />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/prediksi"
-          element={
-            <ProtectedRoute>
-              <PrediksiPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/Rekap"
-          element={
-            <ProtectedRoute>
-              <StokLayout />
-            </ProtectedRoute>
-          }
-        >
+        {/* Rekap Subpage */}
+        <Route path="/Rekap" element={<StokLayout />}>
           <Route path="laba" element={<Laba />} />
           <Route path="produklaris" element={<ProdukLaris />} />
         </Route>
 
-        <Route
-          path="/Stok"
-          element={
-            <ProtectedRoute>
-              <StokLayout />
-            </ProtectedRoute>
-          }
-        >
+        {/* Stok Subpage */}
+        <Route path="/Stok" element={<StokLayout />}>
           <Route path="total" element={<StockTable />} />
           <Route path="bulanan" element={<StockOpname />} />
         </Route>
 
+        {/* Khusus Transaksi Wajib Login */}
         <Route
           path="/Transaksi"
           element={
@@ -97,8 +52,8 @@ function App() {
           <Route path="pengembalian" element={<Pengembalian />} />
         </Route>
 
-        {/* Redirect semua path tak dikenal ke /login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Redirect jika URL tidak ditemukan */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
